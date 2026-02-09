@@ -22,7 +22,7 @@ export function FadeView({ visible, duration = 500, style, children }: FadeViewP
       duration,
       easing: Easing.inOut(Easing.ease),
     });
-  }, [visible, duration]);
+  }, [visible, duration, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

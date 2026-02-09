@@ -31,14 +31,14 @@ export default function GameScreen() {
         dispatch({ type: 'LOAD_SAVED_DATA', players, settings });
       }
     })();
-  }, []);
+  }, [loadPlayerNames, loadSettings]);
 
   useEffect(() => {
     if (state.phase === 'ROLE_REVEAL') {
       savePlayerNames(state.players.map((p) => p.name));
       saveSettings(state.settings);
     }
-  }, [state.phase]);
+  }, [savePlayerNames, saveSettings, state.phase, state.players, state.settings]);
 
   function renderPhase() {
     switch (state.phase) {
