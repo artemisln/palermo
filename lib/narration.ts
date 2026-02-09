@@ -1,31 +1,55 @@
-export const Narration = {
-  // Night intro
-  nightFalls: 'Night falls on Palermo.\nEveryone close your eyes.',
-  killersWake: 'Hidden Killer and Revealed Killer,\nopen your eyes and meet each other.',
-  closeEyes: 'Close your eyes.',
-  detectiveWake: 'Revealed Killer, raise your hand.\nDetective, open your eyes.',
-  everyoneCloseEyes: 'Everyone close your eyes.',
-  loversWake: 'Lovers, open your eyes\nand find each other.',
+import { t, Language, MessageKey } from './messages';
 
-  // Day
-  dawnBreaks: 'Dawn breaks.\nEveryone open your eyes.',
-  discuss: 'Discuss who to eliminate.',
-  votePrompt: 'Vote on who to eliminate.',
+type NarrationKeys = {
+  nightFalls: string;
+  killersWake: string;
+  closeEyes: string;
+  detectiveWake: string;
+  everyoneCloseEyes: string;
+  loversWake: string;
+  dawnBreaks: string;
+  discuss: string;
+  votePrompt: string;
+  nightAgain: string;
+  killersChoose: string;
+  doctorWake: string;
+  doctorSleep: string;
+  informantWake: string;
+  informantSleep: string;
+  whoWasKilled: string;
+  killBlocked: string;
+  goodWins: string;
+  killersWin: string;
+  loversWin: string;
+};
 
-  // Night kill
-  nightAgain: 'Night falls again.\nEveryone close your eyes.',
-  killersChoose: 'Killers, whisper your target\nto the messenger.',
-  doctorWake: 'Doctor, open your eyes.\nChoose someone to save.',
-  doctorSleep: 'Doctor, close your eyes.',
-  informantWake: 'Informant, open your eyes.',
-  informantSleep: 'Informant, close your eyes.',
+const NARRATION_MAP: Record<keyof NarrationKeys, MessageKey> = {
+  nightFalls: 'narration.nightFalls',
+  killersWake: 'narration.killersWake',
+  closeEyes: 'narration.closeEyes',
+  detectiveWake: 'narration.detectiveWake',
+  everyoneCloseEyes: 'narration.everyoneCloseEyes',
+  loversWake: 'narration.loversWake',
+  dawnBreaks: 'narration.dawnBreaks',
+  discuss: 'narration.discuss',
+  votePrompt: 'narration.votePrompt',
+  nightAgain: 'narration.nightAgain',
+  killersChoose: 'narration.killersChoose',
+  doctorWake: 'narration.doctorWake',
+  doctorSleep: 'narration.doctorSleep',
+  informantWake: 'narration.informantWake',
+  informantSleep: 'narration.informantSleep',
+  whoWasKilled: 'narration.whoWasKilled',
+  killBlocked: 'narration.killBlocked',
+  goodWins: 'end.goodWins',
+  killersWin: 'end.killersWin',
+  loversWin: 'end.loversWin',
+};
 
-  // Announcement
-  whoWasKilled: 'Who was killed during the night?',
-  killBlocked: 'The kill was blocked.\nNo one died tonight.',
-
-  // End
-  goodWins: 'GOOD WINS',
-  killersWin: 'KILLERS WIN',
-  loversWin: 'LOVERS WIN',
-} as const;
+export function getNarration(language: Language): NarrationKeys {
+  const result = {} as NarrationKeys;
+  for (const [key, msgKey] of Object.entries(NARRATION_MAP)) {
+    (result as Record<string, string>)[key] = t(language, msgKey);
+  }
+  return result;
+}

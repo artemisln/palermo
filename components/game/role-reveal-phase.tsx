@@ -1,32 +1,34 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { GameState, GameAction, ROLE_INFO } from '@/lib/game-types';
+import { GameState, GameAction, getRoleInfo } from '@/lib/game-types';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
+import { TFunction } from '@/hooks/use-messages';
 
 interface RoleRevealPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
+  t: TFunction;
 }
 
-export function RoleRevealPhase({ state, dispatch }: RoleRevealPhaseProps) {
+export function RoleRevealPhase({ state, dispatch, t }: RoleRevealPhaseProps) {
   const [showingRole, setShowingRole] = useState(false);
   const player = state.players[state.currentPlayerIndex];
   const isLast = state.currentPlayerIndex === state.players.length - 1;
 
   if (!player) return null;
 
-  const role = player.role ? ROLE_INFO[player.role] : null;
+  const role = player.role ? getRoleInfo(player.role, state.settings.language) : null;
   const isKiller = role?.faction === 'killer';
 
   if (!showingRole) {
     return (
       <FadeView visible style={styles.container}>
-        <Text style={styles.instruction}>Pass the device to</Text>
+        <Text style={styles.instruction}>{t('reveal.passTo')}</Text>
         <Text style={styles.playerName}>{player.name}</Text>
         <View style={styles.buttonContainer}>
-          <Button title="See Your Role" onPress={() => setShowingRole(true)} />
+          <Button title={t('reveal.seeRole')} onPress={() => setShowingRole(true)} />
         </View>
       </FadeView>
     );
@@ -34,19 +36,19 @@ export function RoleRevealPhase({ state, dispatch }: RoleRevealPhaseProps) {
 
   return (
     <FadeView visible style={styles.container}>
-      <Text style={styles.youAre}>You are</Text>
+      <Text style={styles.youAre}>{t('reveal.youAre')}</Text>
       <Text style={[styles.roleName, isKiller ? styles.killer : styles.good]}>
         {role?.name}
       </Text>
       <Text style={styles.description}>{role?.description}</Text>
       {player.isLover && (
         <Text style={styles.loverText}>
-          You are also a Lover.{'\n'}If your partner dies, you die too.
+          {t('reveal.loverNote')}
         </Text>
       )}
       <View style={styles.buttonContainer}>
         <Button
-          title={isLast ? 'Begin Night' : 'Next Player'}
+          title={isLast ? t('reveal.beginNight') : t('reveal.nextPlayer')}
           onPress={() => {
             setShowingRole(false);
             dispatch({ type: 'NEXT_PLAYER' });

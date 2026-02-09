@@ -4,10 +4,12 @@ import { GameState, GameAction } from '@/lib/game-types';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { PlayerList } from './player-list';
+import { TFunction } from '@/hooks/use-messages';
 
 interface DayDiscussionPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
+  t: TFunction;
 }
 
 const DISCUSSION_SECONDS = 180; // 3 minutes
@@ -18,7 +20,7 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function DayDiscussionPhase({ state, dispatch }: DayDiscussionPhaseProps) {
+export function DayDiscussionPhase({ state, dispatch, t }: DayDiscussionPhaseProps) {
   const [timeLeft, setTimeLeft] = useState(DISCUSSION_SECONDS);
 
   useEffect(() => {
@@ -31,20 +33,20 @@ export function DayDiscussionPhase({ state, dispatch }: DayDiscussionPhaseProps)
 
   return (
     <View style={styles.container}>
-      <Text style={styles.phase}>DISCUSSION</Text>
+      <Text style={styles.phase}>{t('day.discussion')}</Text>
       <Text style={[styles.timer, timeLeft === 0 && styles.timerDone]}>
-        {timeLeft > 0 ? formatTime(timeLeft) : 'TIME UP'}
+        {timeLeft > 0 ? formatTime(timeLeft) : t('day.timeUp')}
       </Text>
       <Text style={styles.subtitle}>
-        Round {state.round} — Discuss who to eliminate
+        {t('day.roundSubtitle', { round: state.round })}
       </Text>
 
       <View style={styles.listContainer}>
-        <PlayerList players={state.players} />
+        <PlayerList players={state.players} t={t} />
       </View>
 
       <View style={styles.footer}>
-        <Button title="Begin Voting" onPress={() => dispatch({ type: 'START_VOTING' })} />
+        <Button title={t('day.beginVoting')} onPress={() => dispatch({ type: 'START_VOTING' })} />
       </View>
     </View>
   );

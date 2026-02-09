@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { gameReducer } from '@/lib/game-reducer';
 import { INITIAL_STATE } from '@/lib/game-types';
 import { useGameStorage } from '@/hooks/use-game-storage';
+import { useMessages } from '@/hooks/use-messages';
 import { Palermo } from '@/constants/theme';
 
 import { SetupPhase } from '@/components/game/setup-phase';
@@ -18,8 +19,8 @@ export default function GameScreen() {
   const [state, dispatch] = useReducer(gameReducer, INITIAL_STATE);
   const { loadPlayerNames, loadSettings, savePlayerNames, saveSettings } =
     useGameStorage();
+  const t = useMessages(state.settings.language);
 
-  // Load persisted data on mount
   useEffect(() => {
     (async () => {
       const [players, settings] = await Promise.all([
@@ -32,7 +33,6 @@ export default function GameScreen() {
     })();
   }, []);
 
-  // Save on game start
   useEffect(() => {
     if (state.phase === 'ROLE_REVEAL') {
       savePlayerNames(state.players.map((p) => p.name));
@@ -43,19 +43,19 @@ export default function GameScreen() {
   function renderPhase() {
     switch (state.phase) {
       case 'SETUP':
-        return <SetupPhase state={state} dispatch={dispatch} />;
+        return <SetupPhase state={state} dispatch={dispatch} t={t} />;
       case 'ROLE_REVEAL':
-        return <RoleRevealPhase state={state} dispatch={dispatch} />;
+        return <RoleRevealPhase state={state} dispatch={dispatch} t={t} />;
       case 'NIGHT_INTRO':
-        return <NightIntroPhase state={state} dispatch={dispatch} />;
+        return <NightIntroPhase state={state} dispatch={dispatch} t={t} />;
       case 'DAY_DISCUSSION':
-        return <DayDiscussionPhase state={state} dispatch={dispatch} />;
+        return <DayDiscussionPhase state={state} dispatch={dispatch} t={t} />;
       case 'VOTING':
-        return <VotingPhase state={state} dispatch={dispatch} />;
+        return <VotingPhase state={state} dispatch={dispatch} t={t} />;
       case 'NIGHT_KILL':
-        return <NightKillPhase state={state} dispatch={dispatch} />;
+        return <NightKillPhase state={state} dispatch={dispatch} t={t} />;
       case 'END':
-        return <EndPhase state={state} dispatch={dispatch} />;
+        return <EndPhase state={state} dispatch={dispatch} t={t} />;
     }
   }
 

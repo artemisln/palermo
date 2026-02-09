@@ -1,23 +1,26 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { GameState, GameAction } from '@/lib/game-types';
-import { Narration } from '@/lib/narration';
+import { getNarration } from '@/lib/narration';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { PlayerList } from './player-list';
+import { TFunction } from '@/hooks/use-messages';
 
 interface EndPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
+  t: TFunction;
 }
 
-function getWinnerText(winner: GameState['winner']): string {
+function getWinnerText(winner: GameState['winner'], language: 'el' | 'en'): string {
+  const narration = getNarration(language);
   switch (winner) {
     case 'GOOD':
-      return Narration.goodWins;
+      return narration.goodWins;
     case 'KILLERS':
-      return Narration.killersWin;
+      return narration.killersWin;
     case 'LOVERS':
-      return Narration.loversWin;
+      return narration.loversWin;
     default:
       return '';
   }
@@ -36,26 +39,26 @@ function getWinnerColor(winner: GameState['winner']): string {
   }
 }
 
-export function EndPhase({ state, dispatch }: EndPhaseProps) {
+export function EndPhase({ state, dispatch, t }: EndPhaseProps) {
   return (
     <View style={styles.container}>
       <Text style={[styles.winner, { color: getWinnerColor(state.winner) }]}>
-        {getWinnerText(state.winner)}
+        {getWinnerText(state.winner, state.settings.language)}
       </Text>
 
-      <Text style={styles.subtitle}>Role Reveal</Text>
+      <Text style={styles.subtitle}>{t('end.roleReveal')}</Text>
 
       <View style={styles.listContainer}>
-        <PlayerList players={state.players} showRoles />
+        <PlayerList players={state.players} t={t} showRoles language={state.settings.language} />
       </View>
 
       <View style={styles.footer}>
         <Button
-          title="New Round"
+          title={t('end.newRound')}
           onPress={() => dispatch({ type: 'NEW_ROUND' })}
         />
         <Button
-          title="New Game"
+          title={t('end.newGame')}
           onPress={() => dispatch({ type: 'RESET_GAME' })}
           variant="secondary"
         />

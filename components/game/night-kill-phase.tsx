@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GameState, GameAction } from '@/lib/game-types';
-import { Narration } from '@/lib/narration';
+import { getNarration } from '@/lib/narration';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
 import { PlayerList } from './player-list';
+import { TFunction } from '@/hooks/use-messages';
 
 interface NightKillPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
+  t: TFunction;
 }
 
 type SubPhase = 'NARRATION' | 'SELECT_VICTIM';
@@ -20,9 +22,10 @@ interface NarrationStep {
 }
 
 function buildNightSteps(state: GameState): NarrationStep[] {
+  const narration = getNarration(state.settings.language);
   const steps: NarrationStep[] = [
-    { text: Narration.nightAgain, duration: 4 },
-    { text: Narration.killersChoose, duration: 0 },
+    { text: narration.nightAgain, duration: 4 },
+    { text: narration.killersChoose, duration: 0 },
   ];
 
   const doctorAlive = state.players.some(
@@ -34,28 +37,29 @@ function buildNightSteps(state: GameState): NarrationStep[] {
 
   if (state.settings.doctorEnabled && doctorAlive) {
     steps.push(
-      { text: Narration.doctorWake, duration: 10 },
-      { text: Narration.doctorSleep, duration: 3 },
+      { text: narration.doctorWake, duration: 10 },
+      { text: narration.doctorSleep, duration: 3 },
     );
   }
 
   if (state.settings.informantEnabled && informantAlive) {
     steps.push(
-      { text: Narration.informantWake, duration: 8 },
-      { text: Narration.informantSleep, duration: 3 },
+      { text: narration.informantWake, duration: 8 },
+      { text: narration.informantSleep, duration: 3 },
     );
   }
 
   return steps;
 }
 
-export function NightKillPhase({ state, dispatch }: NightKillPhaseProps) {
+export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
   const [subPhase, setSubPhase] = useState<SubPhase>('NARRATION');
   const [stepIndex, setStepIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
   const [selectedVictimId, setSelectedVictimId] = useState<string | null>(null);
   const [doctorSaved, setDoctorSaved] = useState(false);
 
+  const narration = getNarration(state.settings.language);
   const steps = buildNightSteps(state);
   const step = steps[stepIndex];
   const isLastStep = stepIndex === steps.length - 1;
@@ -82,15 +86,16 @@ export function NightKillPhase({ state, dispatch }: NightKillPhaseProps) {
   if (subPhase === 'SELECT_VICTIM') {
     return (
       <View style={styles.container}>
-        <Text style={styles.phase}>NIGHT</Text>
-        <Text style={styles.title}>{Narration.whoWasKilled}</Text>
+        <Text style={styles.phase}>{t('night.phase')}</Text>
+        <Text style={styles.title}>{narration.whoWasKilled}</Text>
         <Text style={styles.subtitle}>
-          Select the victim, or confirm no one died
+          {t('night.selectVictim')}
         </Text>
 
         <View style={styles.listContainer}>
           <PlayerList
             players={state.players}
+            t={t}
             aliveOnly
             selectable
             selectedId={selectedVictimId}
@@ -106,7 +111,7 @@ export function NightKillPhase({ state, dispatch }: NightKillPhaseProps) {
             <View style={[styles.checkbox, doctorSaved && styles.checkboxActive]}>
               {doctorSaved && <Text style={styles.checkMark}>&#10003;</Text>}
             </View>
-            <Text style={styles.checkboxLabel}>Doctor saved this player</Text>
+            <Text style={styles.checkboxLabel}>{t('night.doctorSaved')}</Text>
           </Pressable>
         )}
 
@@ -114,10 +119,10 @@ export function NightKillPhase({ state, dispatch }: NightKillPhaseProps) {
           <Button
             title={
               doctorSaved
-                ? 'No One Died'
+                ? t('night.noOneDied')
                 : selectedVictimId
-                  ? 'Confirm Kill'
-                  : 'No One Died Tonight'
+                  ? t('night.confirmKill')
+                  : t('night.noOneDiedTonight')
             }
             onPress={() =>
               dispatch({
@@ -139,7 +144,7 @@ export function NightKillPhase({ state, dispatch }: NightKillPhaseProps) {
         <Text style={styles.narration}>{step?.text}</Text>
         {step?.duration === 0 && (
           <View style={styles.buttonContainer}>
-            <Button title="Continue" onPress={advance} />
+            <Button title={t('common.continue')} onPress={advance} />
           </View>
         )}
       </FadeView>

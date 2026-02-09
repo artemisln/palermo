@@ -4,13 +4,15 @@ import { GameState, GameAction, Player } from '@/lib/game-types';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
+import { TFunction } from '@/hooks/use-messages';
 
 interface VotingPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
+  t: TFunction;
 }
 
-export function VotingPhase({ state, dispatch }: VotingPhaseProps) {
+export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
   const alivePlayers = state.players.filter((p) => p.alive);
   const [votes, setVotes] = useState<Record<string, number>>(() =>
     Object.fromEntries(alivePlayers.map((p) => [p.id, 0]))
@@ -61,16 +63,18 @@ export function VotingPhase({ state, dispatch }: VotingPhaseProps) {
     return (
       <View style={styles.container}>
         <FadeView visible style={styles.announcement}>
-          <Text style={styles.announcementLabel}>ELIMINATED</Text>
+          <Text style={styles.announcementLabel}>{t('vote.eliminated')}</Text>
           <Text style={styles.announcementName}>{eliminated.player.name}</Text>
           <Text style={styles.announcementVotes}>
-            {eliminated.voteCount} vote{eliminated.voteCount !== 1 ? 's' : ''}
+            {eliminated.voteCount === 1
+              ? t('vote.votesSingular', { count: eliminated.voteCount })
+              : t('vote.votes', { count: eliminated.voteCount })}
           </Text>
           {eliminated.wasTie && (
-            <Text style={styles.tieNote}>Tied vote — selected randomly</Text>
+            <Text style={styles.tieNote}>{t('vote.tiedNote')}</Text>
           )}
           <View style={styles.announcementButton}>
-            <Button title="Continue" onPress={confirmElimination} variant="danger" />
+            <Button title={t('common.continue')} onPress={confirmElimination} variant="danger" />
           </View>
         </FadeView>
       </View>
@@ -114,10 +118,10 @@ export function VotingPhase({ state, dispatch }: VotingPhaseProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.phase}>VOTE</Text>
-      <Text style={styles.title}>Who is eliminated?</Text>
+      <Text style={styles.phase}>{t('vote.phase')}</Text>
+      <Text style={styles.title}>{t('vote.title')}</Text>
       <Text style={styles.subtitle}>
-        Tap + to add votes for each player
+        {t('vote.subtitle')}
       </Text>
 
       <View style={styles.listContainer}>
@@ -131,10 +135,12 @@ export function VotingPhase({ state, dispatch }: VotingPhaseProps) {
 
       <View style={styles.footer}>
         <Text style={styles.totalVotes}>
-          {totalVotes} vote{totalVotes !== 1 ? 's' : ''} cast
+          {totalVotes === 1
+            ? t('vote.votesCastSingular', { count: totalVotes })
+            : t('vote.votesCast', { count: totalVotes })}
         </Text>
         <Button
-          title="End Voting"
+          title={t('vote.endVoting')}
           onPress={endVoting}
           disabled={totalVotes === 0}
           variant="danger"

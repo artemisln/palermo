@@ -1,42 +1,45 @@
 import { Modal, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { GameSettings } from '@/lib/game-types';
 import { Palermo } from '@/constants/theme';
+import { TFunction } from '@/hooks/use-messages';
+import { MessageKey } from '@/lib/messages';
 
 interface SettingsModalProps {
   visible: boolean;
   settings: GameSettings;
   onUpdate: (settings: Partial<GameSettings>) => void;
   onClose: () => void;
+  t: TFunction;
 }
 
-const ROLES = [
+const ROLES: { key: 'doctorEnabled' | 'informantEnabled' | 'loversEnabled'; nameKey: MessageKey; descKey: MessageKey; minKey: MessageKey }[] = [
   {
-    key: 'doctorEnabled' as const,
-    name: 'Doctor',
-    description: 'Saves one player each night',
-    min: '6+ players',
+    key: 'doctorEnabled',
+    nameKey: 'settings.doctor',
+    descKey: 'settings.doctorDesc',
+    minKey: 'settings.doctorMin',
   },
   {
-    key: 'informantEnabled' as const,
-    name: 'Informant',
-    description: 'Receives limited info each night',
-    min: '7+ players',
+    key: 'informantEnabled',
+    nameKey: 'settings.informant',
+    descKey: 'settings.informantDesc',
+    minKey: 'settings.informantMin',
   },
   {
-    key: 'loversEnabled' as const,
-    name: 'Lovers',
-    description: 'Two linked players — if one dies, both die',
-    min: '7+ players',
+    key: 'loversEnabled',
+    nameKey: 'settings.lovers',
+    descKey: 'settings.loversDesc',
+    minKey: 'settings.loversMin',
   },
 ];
 
-export function SettingsModal({ visible, settings, onUpdate, onClose }: SettingsModalProps) {
+export function SettingsModal({ visible, settings, onUpdate, onClose, t }: SettingsModalProps) {
   return (
     <Modal visible={visible} transparent animationType="fade">
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.card} onStartShouldSetResponder={() => true}>
           <View style={styles.header}>
-            <Text style={styles.title}>Optional Roles</Text>
+            <Text style={styles.title}>{t('settings.title')}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
               <Text style={styles.close}>X</Text>
             </Pressable>
@@ -45,9 +48,9 @@ export function SettingsModal({ visible, settings, onUpdate, onClose }: Settings
           {ROLES.map((role) => (
             <View key={role.key} style={styles.row}>
               <View style={styles.rowText}>
-                <Text style={styles.roleName}>{role.name}</Text>
-                <Text style={styles.roleDesc}>{role.description}</Text>
-                <Text style={styles.roleMin}>{role.min}</Text>
+                <Text style={styles.roleName}>{t(role.nameKey)}</Text>
+                <Text style={styles.roleDesc}>{t(role.descKey)}</Text>
+                <Text style={styles.roleMin}>{t(role.minKey)}</Text>
               </View>
               <Switch
                 value={settings[role.key]}
@@ -57,6 +60,46 @@ export function SettingsModal({ visible, settings, onUpdate, onClose }: Settings
               />
             </View>
           ))}
+
+          <View style={styles.divider} />
+
+          <View style={styles.row}>
+            <Text style={styles.roleName}>{t('settings.language')}</Text>
+            <View style={styles.langRow}>
+              <Pressable
+                onPress={() => onUpdate({ language: 'el' })}
+                style={[
+                  styles.langChip,
+                  settings.language === 'el' && styles.langChipActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.langText,
+                    settings.language === 'el' && styles.langTextActive,
+                  ]}
+                >
+                  Ελληνικά
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => onUpdate({ language: 'en' })}
+                style={[
+                  styles.langChip,
+                  settings.language === 'en' && styles.langChipActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.langText,
+                    settings.language === 'en' && styles.langTextActive,
+                  ]}
+                >
+                  English
+                </Text>
+              </Pressable>
+            </View>
+          </View>
         </View>
       </Pressable>
     </Modal>
@@ -116,5 +159,32 @@ const styles = StyleSheet.create({
   roleMin: {
     color: Palermo.textDead,
     fontSize: 11,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Palermo.border,
+  },
+  langRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  langChip: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Palermo.border,
+  },
+  langChipActive: {
+    borderColor: Palermo.accent,
+    backgroundColor: Palermo.accentMuted,
+  },
+  langText: {
+    color: Palermo.textMuted,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  langTextActive: {
+    color: '#fff',
   },
 });

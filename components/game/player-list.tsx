@@ -1,23 +1,28 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Player, ROLE_INFO } from '@/lib/game-types';
+import { Player, getRoleInfo } from '@/lib/game-types';
 import { Palermo } from '@/constants/theme';
+import { TFunction } from '@/hooks/use-messages';
 
 interface PlayerListProps {
   players: Player[];
+  t: TFunction;
   showRoles?: boolean;
   selectable?: boolean;
   selectedId?: string | null;
   onSelect?: (id: string) => void;
   aliveOnly?: boolean;
+  language?: 'el' | 'en';
 }
 
 export function PlayerList({
   players,
+  t,
   showRoles = false,
   selectable = false,
   selectedId,
   onSelect,
   aliveOnly = false,
+  language = 'en',
 }: PlayerListProps) {
   const list = aliveOnly ? players.filter((p) => p.alive) : players;
 
@@ -40,22 +45,22 @@ export function PlayerList({
             {item.name}
           </Text>
           {item.isLover && showRoles && (
-            <Text style={styles.loverBadge}>Lover</Text>
+            <Text style={styles.loverBadge}>{t('common.lover')}</Text>
           )}
         </View>
         {showRoles && item.role && (
           <Text
             style={[
               styles.role,
-              ROLE_INFO[item.role].faction === 'killer'
+              getRoleInfo(item.role, language).faction === 'killer'
                 ? styles.roleKiller
                 : styles.roleGood,
             ]}
           >
-            {ROLE_INFO[item.role].name}
+            {getRoleInfo(item.role, language).name}
           </Text>
         )}
-        {dead && !showRoles && <Text style={styles.deadMark}>DEAD</Text>}
+        {dead && !showRoles && <Text style={styles.deadMark}>{t('common.dead')}</Text>}
       </Pressable>
     );
   }

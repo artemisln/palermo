@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { GameAction, GameState, getMinPlayers } from '@/lib/game-types';
+import { TFunction } from '@/hooks/use-messages';
 import { useRef, useState } from 'react';
 import {
   Alert,
@@ -16,9 +17,10 @@ import { SettingsModal } from './settings-modal';
 interface SetupPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
+  t: TFunction;
 }
 
-export function SetupPhase({ state, dispatch }: SetupPhaseProps) {
+export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
   const [name, setName] = useState('');
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -56,8 +58,8 @@ export function SetupPhase({ state, dispatch }: SetupPhaseProps) {
   function handleStart() {
     if (!canStart) {
       Alert.alert(
-        'Not enough players',
-        `You need at least ${minPlayers} players with the current settings.`
+        t('setup.notEnoughTitle'),
+        t('setup.notEnoughMessage', { min: minPlayers })
       );
       return;
     }
@@ -67,13 +69,13 @@ export function SetupPhase({ state, dispatch }: SetupPhaseProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>PALERMO</Text>
+        <Text style={styles.title}>{t('app.title')}</Text>
         <Pressable onPress={() => setSettingsVisible(true)} hitSlop={12}>
           <Text style={styles.gear}>&#9881;</Text>
         </Pressable>
       </View>
 
-      <Text style={styles.subtitle}>Add players (comma-separated for multiple)</Text>
+      <Text style={styles.subtitle}>{t('setup.addPlayers')}</Text>
 
       <View style={styles.inputRow}>
         <TextInput
@@ -81,7 +83,7 @@ export function SetupPhase({ state, dispatch }: SetupPhaseProps) {
           style={styles.input}
           value={name}
           onChangeText={setName}
-          placeholder="Name"
+          placeholder={t('setup.placeholder')}
           placeholderTextColor={Palermo.textDead}
           onSubmitEditing={addPlayers}
           blurOnSubmit={false}
@@ -165,10 +167,12 @@ export function SetupPhase({ state, dispatch }: SetupPhaseProps) {
 
       <View style={styles.footer}>
         <Text style={styles.count}>
-          {state.players.length} player{state.players.length !== 1 ? 's' : ''}
-          {!canStart ? ` (need ${minPlayers})` : ''}
+          {state.players.length === 1
+            ? t('setup.playerCountSingular', { count: state.players.length })
+            : t('setup.playerCount', { count: state.players.length })}
+          {!canStart ? ` ${t('setup.playerCountNeed', { min: minPlayers })}` : ''}
         </Text>
-        <Button title="START GAME" onPress={handleStart} disabled={!canStart} />
+        <Button title={t('setup.startGame')} onPress={handleStart} disabled={!canStart} />
       </View>
 
       <SettingsModal
@@ -176,6 +180,7 @@ export function SetupPhase({ state, dispatch }: SetupPhaseProps) {
         settings={state.settings}
         onUpdate={(s) => dispatch({ type: 'UPDATE_SETTINGS', settings: s })}
         onClose={() => setSettingsVisible(false)}
+        t={t}
       />
     </View>
   );
