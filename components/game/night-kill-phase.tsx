@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Audio, AVPlaybackStatus } from 'expo-av';
 import { GameState, GameAction } from '@/lib/game-types';
-import { getNarration } from '@/lib/narration';
+import { getNarration, getNarrationAudio, NarrationAudioKey } from '@/lib/narration';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
@@ -18,14 +19,21 @@ type SubPhase = 'NARRATION' | 'SELECT_VICTIM';
 
 interface NarrationStep {
   text: string;
-  duration: number; // 0 = manual
+  audioKey: NarrationAudioKey;
+  fallbackDuration: number; // 0 = manual
+  manual?: boolean;
 }
 
 function buildNightSteps(state: GameState): NarrationStep[] {
   const narration = getNarration(state.settings.language);
   const steps: NarrationStep[] = [
-    { text: narration.nightAgain, duration: 4 },
-    { text: narration.killersChoose, duration: 0 },
+    { text: narration.nightAgain, audioKey: 'nightAgain', fallbackDuration: 4 },
+    {
+      text: narration.killersChoose,
+      audioKey: 'killersChoose',
+      fallbackDuration: 0,
+      manual: true,
+    },
   ];
 
   const doctorAlive = state.players.some(
@@ -37,15 +45,23 @@ function buildNightSteps(state: GameState): NarrationStep[] {
 
   if (state.settings.doctorEnabled && doctorAlive) {
     steps.push(
-      { text: narration.doctorWake, duration: 10 },
-      { text: narration.doctorSleep, duration: 3 },
+      { text: narration.doctorWake, audioKey: 'doctorWake', fallbackDuration: 10 },
+      { text: narration.doctorSleep, audioKey: 'doctorSleep', fallbackDuration: 3 },
     );
   }
 
   if (state.settings.informantEnabled && informantAlive) {
     steps.push(
-      { text: narration.informantWake, duration: 8 },
-      { text: narration.informantSleep, duration: 3 },
+      {
+        text: narration.informantWake,
+        audioKey: 'informantWake',
+        fallbackDuration: 8,
+      },
+      {
+        text: narration.informantSleep,
+        audioKey: 'informantSleep',
+        fallbackDuration: 3,
+      },
     );
   }
 
@@ -56,13 +72,28 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
   const [subPhase, setSubPhase] = useState<SubPhase>('NARRATION');
   const [stepIndex, setStepIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [selectedVictimId, setSelectedVictimId] = useState<string | null>(null);
   const [doctorSaved, setDoctorSaved] = useState(false);
 
-  const narration = getNarration(state.settings.language);
-  const steps = buildNightSteps(state);
+  const narration = useMemo(
+    () => getNarration(state.settings.language),
+    [state.settings.language]
+  );
+  const steps = useMemo(() => buildNightSteps(state), [state]);
   const step = steps[stepIndex];
   const isLastStep = stepIndex === steps.length - 1;
+  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
+
+  const unloadSound = useCallback(async () => {
+    const sound = soundRef.current;
+    if (!sound) return;
+    sound.setOnPlaybackStatusUpdate(null);
+    soundRef.current = null;
+    await sound.unloadAsync();
+  }, []);
 
   const advance = useCallback(() => {
     if (isLastStep) {
@@ -70,7 +101,10 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
       return;
     }
     setFadeIn(false);
-    setTimeout(() => {
+    if (transitionTimerRef.current) {
+      clearTimeout(transitionTimerRef.current);
+    }
+    transitionTimerRef.current = setTimeout(() => {
       setStepIndex((i) => i + 1);
       setFadeIn(true);
     }, 400);
@@ -78,10 +112,69 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
 
   useEffect(() => {
     if (subPhase !== 'NARRATION') return;
-    if (!step || step.duration === 0) return;
-    const timer = setTimeout(advance, step.duration * 1000);
-    return () => clearTimeout(timer);
-  }, [stepIndex, step, advance, subPhase]);
+    let active = true;
+
+    const playStepAudio = async () => {
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+        fallbackTimerRef.current = null;
+      }
+
+      if (!step) return;
+
+      setIsAudioPlaying(true);
+      await unloadSound();
+
+      try {
+        const source = getNarrationAudio(state.settings.language, step.audioKey);
+        const { sound } = await Audio.Sound.createAsync(source);
+        if (!active) {
+          await sound.unloadAsync();
+          return;
+        }
+
+        soundRef.current = sound;
+        sound.setOnPlaybackStatusUpdate((status: AVPlaybackStatus) => {
+          if (!active || !status.isLoaded) return;
+          if (status.didJustFinish) {
+            setIsAudioPlaying(false);
+            if (!step.manual) {
+              advance();
+            }
+          }
+        });
+        await sound.playAsync();
+      } catch {
+        setIsAudioPlaying(false);
+        if (!step.manual && step.fallbackDuration > 0) {
+          fallbackTimerRef.current = setTimeout(advance, step.fallbackDuration * 1000);
+        }
+      }
+    };
+
+    void playStepAudio();
+
+    return () => {
+      active = false;
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+        fallbackTimerRef.current = null;
+      }
+      void unloadSound();
+    };
+  }, [advance, state.settings.language, step, subPhase, unloadSound]);
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+      }
+      void unloadSound();
+    };
+  }, [unloadSound]);
 
   if (subPhase === 'SELECT_VICTIM') {
     return (
@@ -142,9 +235,13 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
     <View style={styles.container}>
       <FadeView visible={fadeIn} duration={400} style={styles.center}>
         <Text style={styles.narration}>{step?.text}</Text>
-        {step?.duration === 0 && (
+        {step?.manual && (
           <View style={styles.buttonContainer}>
-            <Button title={t('common.continue')} onPress={advance} />
+            <Button
+              title={t('common.continue')}
+              onPress={advance}
+              disabled={isAudioPlaying}
+            />
           </View>
         )}
       </FadeView>
