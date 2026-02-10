@@ -33,17 +33,16 @@ describe('Palermo E2E - Smoke Tests', () => {
   });
 
   it('should not start game with less than minimum players', async () => {
-    // Try to start with no players - button should be disabled
-    // Detox doesn't have a direct disabled check, so we verify button exists
-    await expect(element(by.id('start-game-button'))).toBeVisible();
-    
-    // Add one player
+    // Add one player - button should be disabled (need 5 players minimum)
     await element(by.id('player-name-input')).typeText('Alice');
     await element(by.id('add-player-button')).tap();
     
-    // Button should still be disabled (need 5 players minimum)
-    // We can't tap a disabled button - just verify it exists
+    // Verify the button exists and player count shows we need more
     await expect(element(by.id('start-game-button'))).toBeVisible();
+    await expect(element(by.id('player-count'))).toBeVisible();
+    
+    // Note: Detox doesn't have direct disabled state testing
+    // The button is visible but disabled in the UI
   });
 
   it('should start game with minimum required players', async () => {

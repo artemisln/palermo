@@ -114,8 +114,12 @@ describe('Palermo E2E Tests - Critical User Flows', () => {
 
   /**
    * Test 6: User can complete a full game cycle and reach the end screen
+   * 
+   * Note: This test verifies we can reach the voting phase. 
+   * Full voting functionality requires interacting with dynamically generated player IDs,
+   * which would make the test brittle. The test confirms the voting UI is accessible.
    */
-  it('should complete a full game cycle to end screen', async () => {
+  it('should complete a full game cycle to voting phase', async () => {
     // Add 5 players
     const playerNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'];
     
@@ -142,18 +146,15 @@ describe('Palermo E2E Tests - Critical User Flows', () => {
     await expect(element(by.id('day-discussion-phase'))).toBeVisible();
     await element(by.id('begin-voting-button')).tap();
 
-    // Voting phase - vote for first player
+    // Voting phase - verify voting UI is accessible
     await expect(element(by.id('voting-phase'))).toBeVisible();
     
     // Wait for player list to load
     await waitFor(element(by.id('voting-player-list'))).toBeVisible().withTimeout(2000);
     
-    // We need to find and tap a vote button - they have dynamic IDs
-    // Just verify we can see the voting interface
+    // Verify voting interface elements are present
     await expect(element(by.id('voting-total-votes'))).toBeVisible();
-    
-    // Note: In a real test, we would need to interact with dynamic player IDs
-    // For now, this test verifies we reach the voting phase correctly
+    await expect(element(by.id('end-voting-button'))).toBeVisible();
   });
 
   /**
