@@ -61,20 +61,20 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
   // Announcement screen after voting
   if (eliminated) {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} testID="voting-elimination-screen">
         <FadeView visible style={styles.announcement}>
           <Text style={styles.announcementLabel}>{t('vote.eliminated')}</Text>
-          <Text style={styles.announcementName}>{eliminated.player.name}</Text>
-          <Text style={styles.announcementVotes}>
+          <Text style={styles.announcementName} testID="voting-eliminated-name">{eliminated.player.name}</Text>
+          <Text style={styles.announcementVotes} testID="voting-eliminated-votes">
             {eliminated.voteCount === 1
               ? t('vote.votesSingular', { count: eliminated.voteCount })
               : t('vote.votes', { count: eliminated.voteCount })}
           </Text>
           {eliminated.wasTie && (
-            <Text style={styles.tieNote}>{t('vote.tiedNote')}</Text>
+            <Text style={styles.tieNote} testID="voting-tie-note">{t('vote.tiedNote')}</Text>
           )}
           <View style={styles.announcementButton}>
-            <Button title={t('common.continue')} onPress={confirmElimination} variant="danger" />
+            <Button title={t('common.continue')} onPress={confirmElimination} variant="danger" testID="voting-confirm-button" />
           </View>
         </FadeView>
       </View>
@@ -85,9 +85,9 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
     const count = votes[item.id] || 0;
 
     return (
-      <View style={styles.row}>
+      <View style={styles.row} testID={`vote-row-${item.id}`}>
         <View style={styles.nameArea}>
-          <Text style={styles.playerName}>{item.name}</Text>
+          <Text style={styles.playerName} testID={`vote-player-name-${item.id}`}>{item.name}</Text>
         </View>
 
         <View style={styles.voteArea}>
@@ -96,11 +96,12 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
             style={[styles.voteButton, count === 0 && styles.voteButtonDisabled]}
             disabled={count === 0}
             hitSlop={4}
+            testID={`vote-decrease-${item.id}`}
           >
             <Text style={styles.voteButtonText}>-</Text>
           </Pressable>
 
-          <Text style={[styles.voteCount, count > 0 && styles.voteCountActive]}>
+          <Text style={[styles.voteCount, count > 0 && styles.voteCountActive]} testID={`vote-count-${item.id}`}>
             {count}
           </Text>
 
@@ -108,6 +109,7 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
             onPress={() => addVote(item.id)}
             style={styles.voteButton}
             hitSlop={4}
+            testID={`vote-increase-${item.id}`}
           >
             <Text style={styles.voteButtonText}>+</Text>
           </Pressable>
@@ -117,9 +119,9 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.phase}>{t('vote.phase')}</Text>
-      <Text style={styles.title}>{t('vote.title')}</Text>
+    <View style={styles.container} testID="voting-phase">
+      <Text style={styles.phase} testID="voting-phase-label">{t('vote.phase')}</Text>
+      <Text style={styles.title} testID="voting-title">{t('vote.title')}</Text>
       <Text style={styles.subtitle}>
         {t('vote.subtitle')}
       </Text>
@@ -130,11 +132,12 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}
+          testID="voting-player-list"
         />
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.totalVotes}>
+        <Text style={styles.totalVotes} testID="voting-total-votes">
           {totalVotes === 1
             ? t('vote.votesCastSingular', { count: totalVotes })
             : t('vote.votesCast', { count: totalVotes })}
@@ -144,6 +147,7 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
           onPress={endVoting}
           disabled={totalVotes === 0}
           variant="danger"
+          testID="end-voting-button"
         />
       </View>
     </View>

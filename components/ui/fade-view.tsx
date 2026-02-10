@@ -12,9 +12,10 @@ interface FadeViewProps {
   duration?: number;
   style?: StyleProp<ViewStyle>;
   children: React.ReactNode;
+  testID?: string;
 }
 
-export function FadeView({ visible, duration = 500, style, children }: FadeViewProps) {
+export function FadeView({ visible, duration = 500, style, children, testID }: FadeViewProps) {
   const opacity = useSharedValue(0);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export function FadeView({ visible, duration = 500, style, children }: FadeViewP
   }));
 
   return (
-    <Animated.View style={[style, animatedStyle]}>
+    <Animated.View style={[style, animatedStyle]} testID={testID}>
       {children}
     </Animated.View>
   );

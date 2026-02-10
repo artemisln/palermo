@@ -69,8 +69,8 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t('app.title')}</Text>
-        <Pressable onPress={() => setSettingsVisible(true)} hitSlop={12}>
+        <Text style={styles.title} testID="setup-title">{t('app.title')}</Text>
+        <Pressable onPress={() => setSettingsVisible(true)} hitSlop={12} testID="settings-button">
           <Text style={styles.gear}>&#9881;</Text>
         </Pressable>
       </View>
@@ -89,11 +89,13 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
           blurOnSubmit={false}
           returnKeyType="done"
           autoCapitalize="words"
+          testID="player-name-input"
         />
         <Pressable
           onPress={addPlayers}
           style={[styles.addButton, !name.trim() && styles.addButtonDisabled]}
           disabled={!name.trim()}
+          testID="add-player-button"
         >
           <Text style={styles.addButtonText}>+</Text>
         </Pressable>
@@ -105,7 +107,7 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
         keyboardShouldPersistTaps="handled"
       >
         {state.players.map((player, i) => (
-          <View key={player.id} style={styles.playerRow}>
+          <View key={player.id} style={styles.playerRow} testID={`player-item-${player.id}`}>
             <Text style={styles.playerNumber}>{i + 1}</Text>
 
             {editingId === player.id ? (
@@ -137,6 +139,7 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
                 hitSlop={6}
                 disabled={i === 0}
                 style={i === 0 && styles.actionDisabled}
+                testID={`player-move-up-${player.id}`}
               >
                 <Text style={styles.arrow}>&#9650;</Text>
               </Pressable>
@@ -151,12 +154,14 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
                 hitSlop={6}
                 disabled={i === state.players.length - 1}
                 style={i === state.players.length - 1 && styles.actionDisabled}
+                testID={`player-move-down-${player.id}`}
               >
                 <Text style={styles.arrow}>&#9660;</Text>
               </Pressable>
               <Pressable
                 onPress={() => dispatch({ type: 'REMOVE_PLAYER', id: player.id })}
                 hitSlop={8}
+                testID={`player-remove-${player.id}`}
               >
                 <Text style={styles.removeButton}>X</Text>
               </Pressable>
@@ -166,13 +171,13 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Text style={styles.count}>
+        <Text style={styles.count} testID="player-count">
           {state.players.length === 1
             ? t('setup.playerCountSingular', { count: state.players.length })
             : t('setup.playerCount', { count: state.players.length })}
           {!canStart ? ` ${t('setup.playerCountNeed', { min: minPlayers })}` : ''}
         </Text>
-        <Button title={t('setup.startGame')} onPress={handleStart} disabled={!canStart} />
+        <Button title={t('setup.startGame')} onPress={handleStart} disabled={!canStart} testID="start-game-button" />
       </View>
 
       <SettingsModal

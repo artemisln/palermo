@@ -41,12 +41,12 @@ function getWinnerColor(winner: GameState['winner']): string {
 
 export function EndPhase({ state, dispatch, t }: EndPhaseProps) {
   return (
-    <View style={styles.container}>
-      <Text style={[styles.winner, { color: getWinnerColor(state.winner) }]}>
+    <View style={styles.container} testID="end-phase">
+      <Text style={[styles.winner, { color: getWinnerColor(state.winner) }]} testID="end-winner-text">
         {getWinnerText(state.winner, state.settings.language)}
       </Text>
 
-      <Text style={styles.subtitle}>{t('end.roleReveal')}</Text>
+      <Text style={styles.subtitle} testID="end-subtitle">{t('end.roleReveal')}</Text>
 
       <View style={styles.listContainer}>
         <PlayerList players={state.players} t={t} showRoles language={state.settings.language} />
@@ -56,11 +56,13 @@ export function EndPhase({ state, dispatch, t }: EndPhaseProps) {
         <Button
           title={t('end.newRound')}
           onPress={() => dispatch({ type: 'NEW_ROUND' })}
+          testID="new-round-button"
         />
         <Button
           title={t('end.newGame')}
           onPress={() => dispatch({ type: 'RESET_GAME' })}
           variant="secondary"
+          testID="new-game-button"
         />
       </View>
     </View>

@@ -39,13 +39,14 @@ export function PlayerList({
           isSelected && styles.rowSelected,
           dead && styles.rowDead,
         ]}
+        testID={`player-list-item-${item.id}`}
       >
         <View style={styles.nameContainer}>
-          <Text style={[styles.name, dead && styles.nameDead]}>
+          <Text style={[styles.name, dead && styles.nameDead]} testID={`player-list-name-${item.id}`}>
             {item.name}
           </Text>
           {item.isLover && showRoles && (
-            <Text style={styles.loverBadge}>{t('common.lover')}</Text>
+            <Text style={styles.loverBadge} testID={`player-list-lover-${item.id}`}>{t('common.lover')}</Text>
           )}
         </View>
         {showRoles && item.role && (
@@ -56,11 +57,12 @@ export function PlayerList({
                 ? styles.roleKiller
                 : styles.roleGood,
             ]}
+            testID={`player-list-role-${item.id}`}
           >
             {getRoleInfo(item.role, language).name}
           </Text>
         )}
-        {dead && !showRoles && <Text style={styles.deadMark}>{t('common.dead')}</Text>}
+        {dead && !showRoles && <Text style={styles.deadMark} testID={`player-list-dead-${item.id}`}>{t('common.dead')}</Text>}
       </Pressable>
     );
   }
@@ -71,6 +73,7 @@ export function PlayerList({
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       contentContainerStyle={styles.list}
+      testID="player-list"
     />
   );
 }

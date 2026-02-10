@@ -85,9 +85,9 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
 
   if (subPhase === 'SELECT_VICTIM') {
     return (
-      <View style={styles.container}>
-        <Text style={styles.phase}>{t('night.phase')}</Text>
-        <Text style={styles.title}>{narration.whoWasKilled}</Text>
+      <View style={styles.container} testID="night-kill-victim-select">
+        <Text style={styles.phase} testID="night-kill-phase-label">{t('night.phase')}</Text>
+        <Text style={styles.title} testID="night-kill-title">{narration.whoWasKilled}</Text>
         <Text style={styles.subtitle}>
           {t('night.selectVictim')}
         </Text>
@@ -107,6 +107,7 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
           <Pressable
             onPress={() => setDoctorSaved(!doctorSaved)}
             style={styles.checkboxRow}
+            testID="night-kill-doctor-saved-checkbox"
           >
             <View style={[styles.checkbox, doctorSaved && styles.checkboxActive]}>
               {doctorSaved && <Text style={styles.checkMark}>&#10003;</Text>}
@@ -132,6 +133,7 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
               })
             }
             variant={selectedVictimId && !doctorSaved ? 'danger' : 'primary'}
+            testID="night-kill-confirm-button"
           />
         </View>
       </View>
@@ -139,12 +141,12 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="night-kill-narration">
       <FadeView visible={fadeIn} duration={400} style={styles.center}>
-        <Text style={styles.narration}>{step?.text}</Text>
+        <Text style={styles.narration} testID="night-kill-narration-text">{step?.text}</Text>
         {step?.duration === 0 && (
           <View style={styles.buttonContainer}>
-            <Button title={t('common.continue')} onPress={advance} />
+            <Button title={t('common.continue')} onPress={advance} testID="night-kill-continue-button" />
           </View>
         )}
       </FadeView>

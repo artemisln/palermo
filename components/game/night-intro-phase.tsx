@@ -65,12 +65,12 @@ export function NightIntroPhase({ state, dispatch, t }: NightIntroPhaseProps) {
   }, [stepIndex, step.duration, advance]);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="night-intro-phase">
       <FadeView visible={fadeIn} duration={400} style={styles.center}>
-        <Text style={styles.narration}>{step.text}</Text>
+        <Text style={styles.narration} testID="night-intro-narration">{step.text}</Text>
         {step.duration === 0 && (
           <View style={styles.buttonContainer}>
-            <Button title={t('narration.beginDiscussion')} onPress={advance} />
+            <Button title={t('narration.beginDiscussion')} onPress={advance} testID="night-intro-continue-button" />
           </View>
         )}
       </FadeView>

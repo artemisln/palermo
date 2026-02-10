@@ -32,12 +32,12 @@ export function DayDiscussionPhase({ state, dispatch, t }: DayDiscussionPhasePro
   }, [timeLeft]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.phase}>{t('day.discussion')}</Text>
-      <Text style={[styles.timer, timeLeft === 0 && styles.timerDone]}>
+    <View style={styles.container} testID="day-discussion-phase">
+      <Text style={styles.phase} testID="day-phase-label">{t('day.discussion')}</Text>
+      <Text style={[styles.timer, timeLeft === 0 && styles.timerDone]} testID="day-timer">
         {timeLeft > 0 ? formatTime(timeLeft) : t('day.timeUp')}
       </Text>
-      <Text style={styles.subtitle}>
+      <Text style={styles.subtitle} testID="day-round-subtitle">
         {t('day.roundSubtitle', { round: state.round })}
       </Text>
 
@@ -46,7 +46,7 @@ export function DayDiscussionPhase({ state, dispatch, t }: DayDiscussionPhasePro
       </View>
 
       <View style={styles.footer}>
-        <Button title={t('day.beginVoting')} onPress={() => dispatch({ type: 'START_VOTING' })} />
+        <Button title={t('day.beginVoting')} onPress={() => dispatch({ type: 'START_VOTING' })} testID="begin-voting-button" />
       </View>
     </View>
   );

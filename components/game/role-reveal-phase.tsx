@@ -24,25 +24,25 @@ export function RoleRevealPhase({ state, dispatch, t }: RoleRevealPhaseProps) {
 
   if (!showingRole) {
     return (
-      <FadeView visible style={styles.container}>
-        <Text style={styles.instruction}>{t('reveal.passTo')}</Text>
-        <Text style={styles.playerName}>{player.name}</Text>
+      <FadeView visible style={styles.container} testID="role-reveal-pass-screen">
+        <Text style={styles.instruction} testID="role-reveal-instruction">{t('reveal.passTo')}</Text>
+        <Text style={styles.playerName} testID="role-reveal-player-name">{player.name}</Text>
         <View style={styles.buttonContainer}>
-          <Button title={t('reveal.seeRole')} onPress={() => setShowingRole(true)} />
+          <Button title={t('reveal.seeRole')} onPress={() => setShowingRole(true)} testID="see-role-button" />
         </View>
       </FadeView>
     );
   }
 
   return (
-    <FadeView visible style={styles.container}>
+    <FadeView visible style={styles.container} testID="role-reveal-role-screen">
       <Text style={styles.youAre}>{t('reveal.youAre')}</Text>
-      <Text style={[styles.roleName, isKiller ? styles.killer : styles.good]}>
+      <Text style={[styles.roleName, isKiller ? styles.killer : styles.good]} testID="role-reveal-role-name">
         {role?.name}
       </Text>
-      <Text style={styles.description}>{role?.description}</Text>
+      <Text style={styles.description} testID="role-reveal-description">{role?.description}</Text>
       {player.isLover && (
-        <Text style={styles.loverText}>
+        <Text style={styles.loverText} testID="role-reveal-lover-note">
           {t('reveal.loverNote')}
         </Text>
       )}
@@ -53,6 +53,7 @@ export function RoleRevealPhase({ state, dispatch, t }: RoleRevealPhaseProps) {
             setShowingRole(false);
             dispatch({ type: 'NEXT_PLAYER' });
           }}
+          testID="role-reveal-next-button"
         />
       </View>
     </FadeView>

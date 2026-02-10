@@ -7,9 +7,10 @@ interface ButtonProps {
   onPress: () => void;
   disabled?: boolean;
   variant?: 'primary' | 'danger' | 'secondary';
+  testID?: string;
 }
 
-export function Button({ title, onPress, disabled, variant = 'primary' }: ButtonProps) {
+export function Button({ title, onPress, disabled, variant = 'primary', testID }: ButtonProps) {
   const bg =
     variant === 'danger'
       ? Palermo.danger
@@ -32,6 +33,7 @@ export function Button({ title, onPress, disabled, variant = 'primary' }: Button
         pressed && styles.pressed,
         disabled && styles.disabled,
       ]}
+      testID={testID}
     >
       <Text style={[styles.text, disabled && styles.textDisabled]}>{title}</Text>
     </Pressable>
