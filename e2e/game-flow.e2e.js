@@ -173,7 +173,12 @@ describe('Palermo E2E Tests - Critical User Flows', () => {
 
     // Background the app
     await device.sendToHome();
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Wait a moment for the app to fully background
+    await waitFor(element(by.id('setup-title')))
+      .not.toBeVisible()
+      .withTimeout(2000)
+      .catch(() => {}); // Ignore if element becomes invisible
 
     // Resume the app
     await device.launchApp({ newInstance: false });
