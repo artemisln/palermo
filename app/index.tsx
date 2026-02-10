@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { gameReducer } from '@/lib/game-reducer';
@@ -6,6 +6,7 @@ import { INITIAL_STATE } from '@/lib/game-types';
 import { useGameStorage } from '@/hooks/use-game-storage';
 import { useMessages } from '@/hooks/use-messages';
 import { Palermo } from '@/constants/theme';
+import { trackGameStarted, trackGameFinished } from '@/lib/analytics';
 
 import { SetupPhase } from '@/components/game/setup-phase';
 import { RoleRevealPhase } from '@/components/game/role-reveal-phase';
@@ -20,6 +21,7 @@ export default function GameScreen() {
   const { loadPlayerNames, loadSettings, savePlayerNames, saveSettings } =
     useGameStorage();
   const t = useMessages(state.settings.language);
+  const gameStartTime = useRef<number | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -39,6 +41,28 @@ export default function GameScreen() {
       saveSettings(state.settings);
     }
   }, [savePlayerNames, saveSettings, state.phase, state.players, state.settings]);
+
+  // Track game started
+  useEffect(() => {
+    if (state.phase === 'ROLE_REVEAL' && gameStartTime.current === null) {
+      gameStartTime.current = Date.now();
+      trackGameStarted({ players_count: state.players.length });
+    }
+  }, [state.phase, state.players.length]);
+
+  // Track game finished
+  useEffect(() => {
+    if (state.phase === 'END' && gameStartTime.current !== null && state.winner) {
+      const duration = Math.floor((Date.now() - gameStartTime.current) / 1000);
+      trackGameFinished({
+        players_count: state.players.length,
+        duration_seconds: duration,
+        winner: state.winner,
+      });
+      // Reset for next game
+      gameStartTime.current = null;
+    }
+  }, [state.phase, state.winner, state.players.length]);
 
   function renderPhase() {
     switch (state.phase) {
