@@ -61,19 +61,6 @@ export async function setupBasicGame(playerCount = 5) {
 }
 
 /**
- * Delays execution for a specified time
- * 
- * WARNING: Avoid using fixed delays in tests. This utility should only be used
- * when absolutely necessary (e.g., waiting for animations that have no observable state change).
- * Prefer using waitFor() with element visibility checks instead.
- * 
- * @param {number} ms - Milliseconds to delay
- */
-export function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/**
  * Reloads the app to a clean state
  */
 export async function resetApp() {
