@@ -45,7 +45,10 @@ export default function GameScreen() {
   // Track game started
   useEffect(() => {
     if (state.phase === 'ROLE_REVEAL' && gameStartTime.current === null) {
+      // Capture start time first for accurate duration tracking
       gameStartTime.current = Date.now();
+      // Fire-and-forget analytics tracking (intentionally not awaited)
+      // Analytics should never block the user experience
       trackGameStarted({ players_count: state.players.length });
     }
   }, [state.phase, state.players.length]);
@@ -54,6 +57,7 @@ export default function GameScreen() {
   useEffect(() => {
     if (state.phase === 'END' && gameStartTime.current !== null && state.winner) {
       const duration = Math.floor((Date.now() - gameStartTime.current) / 1000);
+      // Fire-and-forget analytics tracking (intentionally not awaited)
       trackGameFinished({
         players_count: state.players.length,
         duration_seconds: duration,

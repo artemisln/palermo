@@ -10,16 +10,19 @@ export default function RootLayout() {
 
   useEffect(() => {
     // Track session start when app loads
+    // Fire-and-forget pattern - analytics should never block app initialization
     trackSessionStarted();
 
     // Track session end when app goes to background or closes
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'background' || nextAppState === 'inactive') {
         const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
+        // Fire-and-forget - intentionally not awaited
         trackSessionEnded({ duration_seconds: duration });
       } else if (nextAppState === 'active') {
         // Reset session start time when app comes back to foreground
         sessionStartTime.current = Date.now();
+        // Fire-and-forget - intentionally not awaited
         trackSessionStarted();
       }
     });
