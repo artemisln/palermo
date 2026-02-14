@@ -13,12 +13,12 @@ module.exports = {
     'ios.debug': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/palermo.app',
-      build: 'xcodebuild -workspace ios/palermo.xcworkspace -scheme palermo -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      build: 'xcodebuild -workspace ios/palermo.xcworkspace -scheme palermo -configuration Debug -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 17,OS=latest" -derivedDataPath ios/build -quiet',
     },
     'ios.release': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/palermo.app',
-      build: 'xcodebuild -workspace ios/palermo.xcworkspace -scheme palermo -configuration Release -sdk iphonesimulator -derivedDataPath ios/build -quiet',
+      build: 'xcodebuild -workspace ios/palermo.xcworkspace -scheme palermo -configuration Release -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 17,OS=latest" -derivedDataPath ios/build -quiet',
     },
     'android.debug': {
       type: 'android.apk',
@@ -36,7 +36,7 @@ module.exports = {
     simulator: {
       type: 'ios.simulator',
       device: {
-        type: 'iPhone 15',
+        type: 'iPhone 17',
       },
     },
     emulator: {
