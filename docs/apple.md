@@ -18,94 +18,92 @@
 ## What We've Done
 
 ### 1. Configured the App for Production
-
-**Files modified:**
-
-- **app.json** - Added iOS and Android configuration:
-  - `bundleIdentifier`: `com.artemiscodes.palermo`
-  - `buildNumber`: `"1"` (iOS internal build number)
-  - `package`: `com.artemiscodes.palermo` (Android)
-  - `versionCode`: `1` (Android internal build number)
-  - `ITSAppUsesNonExemptEncryption`: `false` (standard encryption only)
-  - `UIBackgroundModes`: `["audio"]` (for game narration)
-  - EAS project ID linked
-
-- **eas.json** - Created EAS Build and Submit configuration:
-  - Development, preview, and production build profiles
-  - iOS submit config with Apple credentials
-  - Android submit config (for future Google Play)
-  - `appVersionSource`: `"local"` (versions managed in app.json)
-
-- **.gitignore** - Added `google-service-account.json` to prevent leaking credentials
+- Added `bundleIdentifier` and `package`: `com.artemiscodes.palermo`
+- Set `buildNumber`: `"2"`, `versionCode`: `1`
+- Added `ITSAppUsesNonExemptEncryption`: `false`
+- Added `UIBackgroundModes`: `["audio"]` for game narration
+- Linked EAS project ID
 
 ### 2. Created Expo/EAS Account
-
 - Account: `@artemisln` on expo.dev
-- Project linked: `@artemisln/palermo`
+- Project: `@artemisln/palermo`
 - Free tier (30 builds/month)
 
 ### 3. Registered with Apple
-
 - Apple Developer Program (Individual account)
 - Team: Aikaterini Artemis Leonardou (JDHGY38643)
-- Bundle ID `com.artemiscodes.palermo` registered on Apple Developer Portal
+- Bundle ID registered on Apple Developer Portal
 
 ### 4. Created App in App Store Connect
-
 - App name: "Μία Νύχτα στο Παλέρμο"
 - Original name "Παλέρμο" was taken
 - Apple ID: 6759204428
 - Primary language: Greek
 
 ### 5. Generated iOS Credentials (via EAS)
+- **Distribution Certificate**: Serial 152E3B119F4F9CE799C86DF2514E0E8B (expires Feb 15, 2027)
+- **Provisioning Profile**: HDQ7PATJ4C, active (expires Feb 15, 2027)
+- **App Store Connect API Key**: Generated for automated submissions
 
-EAS automatically created and manages:
-
-- **Distribution Certificate**
-  - Serial: 152E3B119F4F9CE799C86DF2514E0E8B
-  - Expires: Feb 15, 2027
-
-- **Provisioning Profile**
-  - Developer Portal ID: HDQ7PATJ4C
-  - Status: Active
-  - Expires: Feb 15, 2027
-
-- **App Store Connect API Key**
-  - Generated for automated submissions
-
-### 6. Built the iOS App
-
-- First production build completed successfully
+### 6. Built and Submitted to App Store Connect
+- Build 1.0.0 (1): Successfully built and uploaded
 - Build URL: https://expo.dev/accounts/artemisln/projects/palermo/builds/675d867f-b70c-4bed-a837-850549946472
-- Artifact: .ipa file ready for submission
+- Status: **Ready to Submit** on TestFlight
+- Expires: May 16, 2026 (90-day TestFlight limit)
 
-### 7. Submitted to App Store Connect
+### 7. TestFlight Testing
+- [x] Build processed by Apple
+- [x] App available on TestFlight
+- [x] Downloaded and tested on real device
+- [x] Found and fixed keyboard dismiss bug on setup screen
 
-- Used `eas submit --platform ios --latest`
-- Uploads to TestFlight automatically after Apple processing (~15-30 min)
+### 8. Screenshots Captured
+- [x] Screenshots saved to `assets/screenshots/`
+- Screens captured:
+  - `adding_players.png` - Player setup screen
+  - `give_device_to.png` - Pass-the-phone role reveal
+  - `role_reveal_citizen.png` - Citizen role reveal
+  - `role_reveal_killer.png` - Killer role reveal
+  - `kryfos_faneros_gnorizontai.png` - Hidden/Revealed killer intro
+  - `nyxta_peftei_kleiste_matia.png` - Night falls narration
+  - `stoxos_dolofonon.png` - Killer target selection
+  - `poios_skotothike.png` - Kill announcement
+  - `ksimerose.png` - Day discussion phase
+  - `voting.png` - Voting phase
+  - `apoblithike.png` - Player eliminated
+  - `game_end_niki_dolofonon.png` - Killers win screen
 
 ---
 
 ## What's Left To Do
 
-### For TestFlight Release:
-- [ ] Wait for Apple to process the build (~15-30 min)
-- [ ] Test on real device via TestFlight app
-
 ### For App Store Release:
-- [ ] Take screenshots (iPhone 6.7" and 6.5" sizes)
-- [ ] Write app description (Greek and/or English)
-- [ ] Create privacy policy URL
+- [ ] Prepare screenshots at required sizes (6.7" and 6.5" iPhone)
+- [x] Write app description (see `docs/app_description.md`)
+- [ ] Create and host privacy policy URL
 - [ ] Set up support URL
-- [ ] Complete age rating questionnaire
-- [ ] Fill in App Store listing in App Store Connect
+- [ ] Complete age rating questionnaire in App Store Connect
+- [ ] Fill in App Store listing (upload screenshots, description, keywords)
+- [ ] Add English localization to listing (optional but recommended)
 - [ ] Submit for App Review (~24-48 hours)
 
-### Optional Improvements:
-- [ ] Add English localization to App Store listing
+### Build 2 (Pending):
+- [ ] Keyboard dismiss fix needs to be built and submitted
+- [ ] buildNumber bumped to "2" in app.json
+
+### Optional:
 - [ ] Create app preview video
 - [ ] Set up Google Play Store listing
 - [ ] Consider changing developer display name to "Artemis Codes"
+
+---
+
+## Builds History
+
+| Version | Build | Date         | Status           | Changes                    |
+| ------- | ----- | ------------ | ---------------- | -------------------------- |
+| 1.0.0   | 1     | Feb 15, 2026 | Ready to Submit  | Initial build              |
+| 1.0.0   | 2     | Pending      | Not yet built    | Keyboard dismiss bug fix   |
 
 ---
 
@@ -132,9 +130,6 @@ eas submit --platform android --latest
 
 # View credentials
 eas credentials
-
-# Check project config
-eas config
 ```
 
 ---
@@ -153,10 +148,12 @@ eas config
 
 ```
 palermo/
-├── app.json              # App config (versions, bundle ID, icons, EAS project ID)
-├── eas.json              # EAS Build & Submit configuration
-├── .gitignore            # Excludes sensitive files (service account keys)
+├── app.json                # App config (versions, bundle ID, icons, EAS project ID)
+├── eas.json                # EAS Build & Submit configuration
+├── .gitignore              # Excludes sensitive files
+├── assets/screenshots/     # App Store screenshots
 └── docs/
-    ├── apple.md          # This file
-    └── updating.md       # How to update the app
+    ├── apple.md            # This file
+    ├── app_description.md  # App Store descriptions (Greek & English)
+    └── updating.md         # How to update the app
 ```
