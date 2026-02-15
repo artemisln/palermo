@@ -5,11 +5,13 @@ import { TFunction } from '@/hooks/use-messages';
 import { useRef, useState } from 'react';
 import {
   Alert,
+  Keyboard,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { SettingsModal } from './settings-modal';
@@ -67,6 +69,7 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
   }
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{t('app.title')}</Text>
@@ -183,6 +186,7 @@ export function SetupPhase({ state, dispatch, t }: SetupPhaseProps) {
         t={t}
       />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
