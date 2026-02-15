@@ -1,11 +1,11 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { gameReducer } from '@/lib/game-reducer';
-import { INITIAL_STATE } from '@/lib/game-types';
+import { useGameReducer } from '@/hooks/use-game-reducer';
 import { useGameStorage } from '@/hooks/use-game-storage';
 import { useMessages } from '@/hooks/use-messages';
 import { Palermo } from '@/constants/theme';
+import { BackButton } from '@/components/ui/back-button';
 
 import { SetupPhase } from '@/components/game/setup-phase';
 import { RoleRevealPhase } from '@/components/game/role-reveal-phase';
@@ -15,7 +15,7 @@ import { NightKillPhase } from '@/components/game/night-kill-phase';
 import { EndPhase } from '@/components/game/end-phase';
 
 export default function GameScreen() {
-  const [state, dispatch] = useReducer(gameReducer, INITIAL_STATE);
+  const [state, dispatch, canGoBack, goBack] = useGameReducer();
   const { loadPlayerNames, loadSettings, savePlayerNames, saveSettings } =
     useGameStorage();
   const t = useMessages(state.settings.language);
@@ -59,6 +59,9 @@ export default function GameScreen() {
   return (
     <View style={styles.root}>
       <SafeAreaView style={styles.safe}>
+        {canGoBack && state.phase !== 'SETUP' && (
+          <BackButton onPress={goBack} />
+        )}
         {renderPhase()}
       </SafeAreaView>
     </View>

@@ -10,7 +10,6 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 export function assignRoles(players: Player[], settings: GameSettings): Player[] {
-  const shuffled = shuffle(players);
   const roles: Role[] = [];
 
   // Core roles (always)
@@ -21,14 +20,14 @@ export function assignRoles(players: Player[], settings: GameSettings): Player[]
   if (settings.informantEnabled) roles.push('INFORMANT');
 
   // Fill remaining with citizens
-  while (roles.length < shuffled.length) {
+  while (roles.length < players.length) {
     roles.push('CITIZEN');
   }
 
-  // Shuffle roles so they're randomly distributed
+  // Shuffle only the roles — keep player order from setup
   const shuffledRoles = shuffle(roles);
 
-  const assigned = shuffled.map((player, i) => ({
+  const assigned = players.map((player, i) => ({
     ...player,
     role: shuffledRoles[i],
     alive: true,

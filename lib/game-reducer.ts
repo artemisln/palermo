@@ -151,6 +151,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'RESET_GAME':
       return { ...INITIAL_STATE };
 
+    case 'RESTORE_STATE':
+      return action.state;
+
     default:
       return state;
   }

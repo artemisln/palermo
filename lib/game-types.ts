@@ -55,7 +55,8 @@ export type GameAction =
   | { type: 'START_NIGHT_KILL' }
   | { type: 'ANNOUNCE_VICTIM'; victimId: string | null; doctorSaved: boolean }
   | { type: 'NEW_ROUND' }
-  | { type: 'RESET_GAME' };
+  | { type: 'RESET_GAME' }
+  | { type: 'RESTORE_STATE'; state: GameState };
 
 export const DEFAULT_SETTINGS: GameSettings = {
   doctorEnabled: false,
