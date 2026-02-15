@@ -12,6 +12,8 @@
 | Apple Account       | artemis.leona@gmail.com                        |
 | EAS Project ID      | d7ae3f62-6dd6-4779-b097-b743033ea35d           |
 | EAS Owner           | @artemisln                                     |
+| Privacy Policy URL  | https://artemiscodes.com/palermo/privacy-policy.html |
+| Support URL         | https://artemiscodes.com/palermo/support.html        |
 
 ---
 
@@ -80,8 +82,8 @@
 ### For App Store Release:
 - [ ] Prepare screenshots at required sizes (6.7" and 6.5" iPhone)
 - [x] Write app description (see `docs/app_description.md`)
-- [ ] Create and host privacy policy URL
-- [ ] Set up support URL
+- [x] Privacy policy live at https://artemiscodes.com/palermo/privacy-policy.html
+- [x] Support page live at https://artemiscodes.com/palermo/support.html
 - [ ] Complete age rating questionnaire in App Store Connect
 - [ ] Fill in App Store listing (upload screenshots, description, keywords)
 - [ ] Add English localization to listing (optional but recommended)
