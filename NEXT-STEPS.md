@@ -2,13 +2,7 @@
 
 ## TODO
 
-### 1. Add Logo
-- Design/source a Palermo logo (dark theme, cinematic feel)
-- Add logo image to `assets/images/logo.png` (include @2x and @3x variants)
-- Display on the Setup screen in place of or above the title text
-- Use on the splash screen (`app.json` splash config)
-
-### 2. Add Audio Narration Files (Bilingual)
+### 1. Add Audio Narration Files (Bilingual)
 
 Record or source voice narration for each line in **both Greek and English**.
 
@@ -37,19 +31,19 @@ assets/
 
 | File | English Text | Greek Text |
 |---|---|---|
-| `night-falls.mp3` | "Night falls on Palermo. Everyone close your eyes." | "Νύχτα πέφτει στο Παλέρμο. Όλοι κλείστε τα μάτια." |
-| `killers-wake.mp3` | "Hidden Killer and Revealed Killer, open your eyes and meet each other." | "Κρυφέ και Φανερέ Δολοφόνε, ανοίξτε τα μάτια σας και γνωριστείτε." |
-| `close-eyes.mp3` | "Close your eyes." | "Κλείστε τα μάτια." |
-| `detective-wake.mp3` | "Revealed Killer, raise your hand. Detective, open your eyes." | "Φανερέ Δολοφόνε, σήκωσε το χέρι σου. Αστυνομικέ, άνοιξε τα μάτια σου." |
-| `everyone-close-eyes.mp3` | "Everyone close your eyes." | "Όλοι κλείστε τα μάτια." |
-| `lovers-wake.mp3` | "Lovers, open your eyes and find each other." | "Ερωτευμένοι, ανοίξτε τα μάτια σας και γνωριστείτε." |
-| `dawn-breaks.mp3` | "Dawn breaks. Everyone open your eyes." | "Ξημέρωσε. Όλοι ανοίξτε τα μάτια." |
-| `night-again.mp3` | "Night falls again. Everyone close your eyes." | "Νύχτα πέφτει ξανά. Όλοι κλείστε τα μάτια." |
-| `killers-choose.mp3` | "Killers, whisper your target to the messenger." | "Δολοφόνοι, ψιθυρίστε τον στόχο σας στον αγγελιοφόρο." |
-| `doctor-wake.mp3` | "Doctor, open your eyes. Choose someone to save." | "Γιατρέ, άνοιξε τα μάτια σου. Διάλεξε κάποιον να σώσεις." |
-| `doctor-sleep.mp3` | "Doctor, close your eyes." | "Γιατρέ, κλείσε τα μάτια σου." |
-| `informant-wake.mp3` | "Informant, open your eyes." | "Ρουφιάνε, άνοιξε τα μάτια σου." |
-| `informant-sleep.mp3` | "Informant, close your eyes." | "Ρουφιάνε, κλείσε τα μάτια σου." |
+| `night-falls.mp3` | "A night falls on Palermo and everyone closes their eyes." | "Μία νύχτα πέφτει στο Παλέρμο και όλοι κλείνουν τα μάτια τους." |
+| `killers-wake.mp3` | "The Hidden Killer and the Revealed Killer open their eyes to meet each other." | "Ο κρυφός και ο φανερός δολοφόνος ανοίγουν τα μάτια τους για να γνωριστούν." |
+| `close-eyes.mp3` | "Everyone closes their eyes." | "Όλοι κλείνουν τα μάτια τους." |
+| `detective-wake.mp3` | "The Revealed Killer raises their hand. The Detective opens their eyes and sees them." | "Ο φανερός δολοφόνος σηκώνει το χέρι του. Ο αστυνομικός ανοίγει τα μάτια του και τον βλέπει." |
+| `everyone-close-eyes.mp3` | "Everyone closes their eyes." | "Όλοι κλείνουν τα μάτια τους." |
+| `lovers-wake.mp3` | "The Lovers open their eyes and find each other." | "Οι ερωτευμένοι ανοίγουν τα μάτια τους και γνωρίζονται." |
+| `dawn-breaks.mp3` | "The day dawns and everyone opens their eyes." | "Η ημέρα ξημερώνει και όλοι ανοίγουν τα μάτια τους." |
+| `night-again.mp3` | "A night falls on Palermo again. Everyone closes their eyes." | "Μία νύχτα πέφτει στο Παλέρμο ξανά. Όλοι κλείνουν τα μάτια τους." |
+| `killers-choose.mp3` | "The killers whisper their target to the messenger." | "Οι δολοφόνοι ψιθυρίζουν τον στόχο τους στον αγγελιοφόρο." |
+| `doctor-wake.mp3` | "The Doctor opens their eyes and chooses who to save." | "Ο γιατρός ανοίγει τα μάτια του και διαλέγει ποιον θέλει να σώσει." |
+| `doctor-sleep.mp3` | "The Doctor closes their eyes." | "Ο γιατρός κλείνει τα μάτια του." |
+| `informant-wake.mp3` | "The Informant opens their eyes." | "Ο ρουφιάνος ανοίγει τα μάτια του." |
+| `informant-sleep.mp3` | "The Informant closes their eyes." | "Ο ρουφιάνος κλείνει τα μάτια του." |
 
 #### Audio Recording Guidelines
 - **Tone:** calm, low, cinematic — think narrator in a thriller
@@ -74,14 +68,14 @@ assets/
 - Fall back to timed text display if audio file fails to load
 - Clean up audio resources on phase change (`sound.unloadAsync()`)
 
-### 3. Skip Discussion Phase — Go Straight to Voting
+### 2. Skip Discussion Phase — Go Straight to Voting
 - Remove the "Start discussion" button and "Discuss who to eliminate" text
 - Remove the discussion timer completely
 - After "Ξημέρωσε. Ανοίξτε τα μάτια" (dawn narration), transition directly to the Voting phase
 - The real discussion happens naturally in person — the app doesn't need to manage it
 - Update `day-discussion-phase.tsx` or remove it and go from `NIGHT_INTRO` / `DAY_DISCUSSION` straight to `VOTING` in the game reducer
 
-### 4. Add Atmospheric Audio Effects
+### 3. Add Atmospheric Audio Effects
 - Add mysterious/suspenseful sound effects to enhance the game's cinematic feel
 - Examples:
   - Eerie ambient drone during night phases
@@ -94,7 +88,7 @@ assets/
 - Store in `assets/audio/sfx/` (language-independent)
 - Play via `expo-av` alongside narration where appropriate
 
-### 5. Fix Role Shuffling — Killers Should Not Always Be First Two Players
+### 4. Fix Role Shuffling — Killers Should Not Always Be First Two Players
 - Currently the killers are always assigned to the first two players in the list
 - Role assignment must be properly randomized/shuffled
 - Update the role assignment logic in `lib/role-assignment.ts` to shuffle players before assigning roles
