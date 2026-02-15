@@ -59,12 +59,7 @@
   "narration.informantSleep": "The Informant closes their eyes.",
   "narration.whoWasKilled": "Who was killed during the night?",
   "narration.killBlocked": "The kill was blocked.\nNo one died tonight.",
-  "narration.beginDiscussion": "Begin Discussion",
-
-  "day.discussion": "DISCUSSION",
-  "day.timeUp": "TIME UP",
-  "day.roundSubtitle": "Round {round} — Discuss who to eliminate",
-  "day.beginVoting": "Begin Voting",
+  "narration.beginVoting": "Begin Voting",
 
   "vote.phase": "VOTE",
   "vote.title": "Who is eliminated?",

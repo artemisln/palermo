@@ -25,10 +25,12 @@ export function assignRoles(players: Player[], settings: GameSettings): Player[]
     roles.push('CITIZEN');
   }
 
-  // Assign roles
+  // Shuffle roles so they're randomly distributed
+  const shuffledRoles = shuffle(roles);
+
   const assigned = shuffled.map((player, i) => ({
     ...player,
-    role: roles[i],
+    role: shuffledRoles[i],
     alive: true,
     isLover: false,
   }));

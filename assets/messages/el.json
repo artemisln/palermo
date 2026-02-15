@@ -59,12 +59,7 @@
   "narration.informantSleep": "Ο ρουφιάνος κλείνει τα μάτια του.",
   "narration.whoWasKilled": "Ποιος σκοτώθηκε τη νύχτα;",
   "narration.killBlocked": "Η δολοφονία απέτυχε.\nΚανείς δεν πέθανε απόψε.",
-  "narration.beginDiscussion": "Ξεκίνα τη Συζήτηση",
-
-  "day.discussion": "ΣΥΖΗΤΗΣΗ",
-  "day.timeUp": "ΤΕΛΟΣ ΧΡΟΝΟΥ",
-  "day.roundSubtitle": "Γύρος {round} — Συζητήστε ποιον θα αποβάλετε",
-  "day.beginVoting": "Ξεκίνα την Ψηφοφορία",
+  "narration.beginVoting": "Ξεκίνα την Ψηφοφορία",
 
   "vote.phase": "ΨΗΦΟΦΟΡΙΑ",
   "vote.title": "Ποιος αποβάλλεται;",

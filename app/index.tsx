@@ -10,7 +10,6 @@ import { Palermo } from '@/constants/theme';
 import { SetupPhase } from '@/components/game/setup-phase';
 import { RoleRevealPhase } from '@/components/game/role-reveal-phase';
 import { NightIntroPhase } from '@/components/game/night-intro-phase';
-import { DayDiscussionPhase } from '@/components/game/day-discussion-phase';
 import { VotingPhase } from '@/components/game/voting-phase';
 import { NightKillPhase } from '@/components/game/night-kill-phase';
 import { EndPhase } from '@/components/game/end-phase';
@@ -48,8 +47,6 @@ export default function GameScreen() {
         return <RoleRevealPhase state={state} dispatch={dispatch} t={t} />;
       case 'NIGHT_INTRO':
         return <NightIntroPhase state={state} dispatch={dispatch} t={t} />;
-      case 'DAY_DISCUSSION':
-        return <DayDiscussionPhase state={state} dispatch={dispatch} t={t} />;
       case 'VOTING':
         return <VotingPhase state={state} dispatch={dispatch} t={t} />;
       case 'NIGHT_KILL':

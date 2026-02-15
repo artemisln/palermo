@@ -68,14 +68,7 @@ assets/
 - Fall back to timed text display if audio file fails to load
 - Clean up audio resources on phase change (`sound.unloadAsync()`)
 
-### 2. Skip Discussion Phase — Go Straight to Voting
-- Remove the "Start discussion" button and "Discuss who to eliminate" text
-- Remove the discussion timer completely
-- After "Ξημέρωσε. Ανοίξτε τα μάτια" (dawn narration), transition directly to the Voting phase
-- The real discussion happens naturally in person — the app doesn't need to manage it
-- Update `day-discussion-phase.tsx` or remove it and go from `NIGHT_INTRO` / `DAY_DISCUSSION` straight to `VOTING` in the game reducer
-
-### 3. Add Atmospheric Audio Effects
+### 2. Add Atmospheric Audio Effects
 - Add mysterious/suspenseful sound effects to enhance the game's cinematic feel
 - Examples:
   - Eerie ambient drone during night phases
@@ -88,9 +81,3 @@ assets/
 - Store in `assets/audio/sfx/` (language-independent)
 - Play via `expo-av` alongside narration where appropriate
 
-### 4. Fix Role Shuffling — Killers Should Not Always Be First Two Players
-- Currently the killers are always assigned to the first two players in the list
-- Role assignment must be properly randomized/shuffled
-- Update the role assignment logic in `lib/role-assignment.ts` to shuffle players before assigning roles
-- Ensure every game has a truly random distribution of roles regardless of player order
-- This is a critical gameplay bug — predictable roles break the social deduction mechanic

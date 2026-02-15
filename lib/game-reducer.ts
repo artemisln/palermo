@@ -104,9 +104,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'FINISH_NIGHT_INTRO':
-      return { ...state, phase: 'DAY_DISCUSSION' };
-
-    case 'START_VOTING':
       return { ...state, phase: 'VOTING' };
 
     case 'ELIMINATE_PLAYER': {
@@ -136,7 +133,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (winner) {
         return { ...state, players, phase: 'END', winner };
       }
-      return { ...state, players, phase: 'DAY_DISCUSSION', round: state.round + 1 };
+      return { ...state, players, phase: 'VOTING', round: state.round + 1 };
     }
 
     case 'NEW_ROUND':

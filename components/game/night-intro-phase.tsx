@@ -70,7 +70,7 @@ export function NightIntroPhase({ state, dispatch, t }: NightIntroPhaseProps) {
         <Text style={styles.narration}>{step.text}</Text>
         {step.duration === 0 && (
           <View style={styles.buttonContainer}>
-            <Button title={t('narration.beginDiscussion')} onPress={advance} />
+            <Button title={t('narration.beginVoting')} onPress={advance} />
           </View>
         )}
       </FadeView>

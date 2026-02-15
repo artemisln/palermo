@@ -4,7 +4,6 @@ export type GamePhase =
   | 'SETUP'
   | 'ROLE_REVEAL'
   | 'NIGHT_INTRO'
-  | 'DAY_DISCUSSION'
   | 'VOTING'
   | 'NIGHT_KILL'
   | 'END';
@@ -52,7 +51,6 @@ export type GameAction =
   | { type: 'SHOW_ROLE' }
   | { type: 'NEXT_PLAYER' }
   | { type: 'FINISH_NIGHT_INTRO' }
-  | { type: 'START_VOTING' }
   | { type: 'ELIMINATE_PLAYER'; playerId: string }
   | { type: 'START_NIGHT_KILL' }
   | { type: 'ANNOUNCE_VICTIM'; victimId: string | null; doctorSaved: boolean }
