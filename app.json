@@ -9,9 +9,17 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.artemiscodes.palermo",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app uses audio for game narration.",
+        "UIBackgroundModes": ["audio"]
+      }
     },
     "android": {
+      "package": "com.artemiscodes.palermo",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0B0E14",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

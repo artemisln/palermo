@@ -1,0 +1,38 @@
+{
+  "cli": {
+    "version": ">= 16.1.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "aab"
+      },
+      "ios": {
+        "simulator": false
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      },
+      "ios": {
+        "appleId": "artemis.leona@gmail.com",
+        "ascAppId": "6759204428",
+        "appleTeamId": "JDHGY38643"
+      }
+    }
+  }
+}
