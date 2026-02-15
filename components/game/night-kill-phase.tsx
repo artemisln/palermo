@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Audio } from 'expo-av';
 import { GameState, GameAction } from '@/lib/game-types';
 import { getNarration } from '@/lib/narration';
 import { Palermo, PalermoFonts } from '@/constants/theme';
@@ -9,13 +10,17 @@ import { PlayerList } from './player-list';
 import { TFunction } from '@/hooks/use-messages';
 import { useNarrationAudio } from '@/hooks/use-narration-audio';
 
+/* eslint-disable @typescript-eslint/no-require-imports */
+const DEATH_SOUND = require('@/assets/audio/effects/amogus.mp3');
+/* eslint-enable @typescript-eslint/no-require-imports */
+
 interface NightKillPhaseProps {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
   t: TFunction;
 }
 
-type SubPhase = 'NARRATION' | 'SELECT_VICTIM';
+type SubPhase = 'NARRATION' | 'SELECT_VICTIM' | 'ANNOUNCEMENT';
 
 interface NarrationStep {
   text: string;
@@ -67,6 +72,29 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
   const isLastStep = stepIndex === steps.length - 1;
   const { playStep, cleanup } = useNarrationAudio(state.settings.language);
   const cancelledRef = useRef(false);
+  const deathSoundRef = useRef<Audio.Sound | null>(null);
+
+  // Play death sound when entering announcement with a kill
+  useEffect(() => {
+    if (subPhase !== 'ANNOUNCEMENT') return;
+    const someoneDied = selectedVictimId && !doctorSaved;
+    if (!someoneDied) return;
+
+    (async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(DEATH_SOUND);
+        deathSoundRef.current = sound;
+        await sound.playAsync();
+      } catch {
+        // ignore
+      }
+    })();
+
+    return () => {
+      deathSoundRef.current?.unloadAsync();
+      deathSoundRef.current = null;
+    };
+  }, [subPhase, selectedVictimId, doctorSaved]);
 
   const advance = useCallback(() => {
     if (isLastStep) {
@@ -147,16 +175,47 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
                   ? t('night.confirmKill')
                   : t('night.noOneDiedTonight')
             }
-            onPress={() =>
-              dispatch({
-                type: 'ANNOUNCE_VICTIM',
-                victimId: selectedVictimId,
-                doctorSaved,
-              })
-            }
+            onPress={() => setSubPhase('ANNOUNCEMENT')}
             variant={selectedVictimId && !doctorSaved ? 'danger' : 'primary'}
           />
         </View>
+      </View>
+    );
+  }
+
+  if (subPhase === 'ANNOUNCEMENT') {
+    const victim = selectedVictimId
+      ? state.players.find((p) => p.id === selectedVictimId)
+      : null;
+    const someoneDied = victim && !doctorSaved;
+
+    return (
+      <View style={styles.container}>
+        <FadeView visible style={styles.announcementCenter}>
+          {someoneDied ? (
+            <>
+              <Text style={styles.announcementLabel}>{t('night.killed')}</Text>
+              <Text style={styles.announcementName}>{victim.name}</Text>
+            </>
+          ) : (
+            <Text style={styles.announcementNote}>
+              {doctorSaved ? t('night.doctorSavedNote') : t('night.noOneSurvivedNote')}
+            </Text>
+          )}
+          <View style={styles.announcementButton}>
+            <Button
+              title={t('common.continue')}
+              onPress={() =>
+                dispatch({
+                  type: 'ANNOUNCE_VICTIM',
+                  victimId: selectedVictimId,
+                  doctorSaved,
+                })
+              }
+              variant={someoneDied ? 'danger' : 'primary'}
+            />
+          </View>
+        </FadeView>
       </View>
     );
   }
@@ -253,5 +312,34 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingTop: 16,
+  },
+  announcementCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  announcementLabel: {
+    color: Palermo.danger,
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 3,
+    marginBottom: 8,
+  },
+  announcementName: {
+    color: Palermo.text,
+    fontSize: 42,
+    fontWeight: '700',
+    fontFamily: PalermoFonts?.title,
+    textAlign: 'center',
+  },
+  announcementNote: {
+    color: Palermo.textMuted,
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  announcementButton: {
+    marginTop: 40,
+    width: '100%',
   },
 });

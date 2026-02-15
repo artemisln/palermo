@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Audio } from 'expo-av';
 import { GameState, GameAction, Player } from '@/lib/game-types';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
 import { TFunction } from '@/hooks/use-messages';
+
+/* eslint-disable @typescript-eslint/no-require-imports */
+const DEATH_SOUND = require('@/assets/audio/effects/amogus.mp3');
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 interface VotingPhaseProps {
   state: GameState;
@@ -51,6 +56,28 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
       wasTie: topPlayers.length > 1,
     });
   }
+
+  const deathSoundRef = useRef<Audio.Sound | null>(null);
+
+  // Play death sound when someone is eliminated
+  useEffect(() => {
+    if (!eliminated) return;
+
+    (async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(DEATH_SOUND);
+        deathSoundRef.current = sound;
+        await sound.playAsync();
+      } catch {
+        // ignore
+      }
+    })();
+
+    return () => {
+      deathSoundRef.current?.unloadAsync();
+      deathSoundRef.current = null;
+    };
+  }, [eliminated]);
 
   function confirmElimination() {
     if (eliminated) {

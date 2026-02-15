@@ -78,6 +78,9 @@
   "night.noOneDied": "Κανείς δεν Πέθανε",
   "night.confirmKill": "Επιβεβαίωση Θανάτου",
   "night.noOneDiedTonight": "Κανείς δεν Πέθανε Απόψε",
+  "night.killed": "ΔΟΛΟΦΟΝΗΘΗΚΕ",
+  "night.noOneSurvivedNote": "Κανείς δεν σκοτώθηκε απόψε.",
+  "night.doctorSavedNote": "Ο γιατρός έσωσε το θύμα.",
 
   "end.goodWins": "ΝΙΚΗ ΚΑΛΩΝ",
   "end.killersWin": "ΝΙΚΗ ΔΟΛΟΦΟΝΩΝ",

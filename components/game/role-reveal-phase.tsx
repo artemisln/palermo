@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Audio } from 'expo-av';
 import { GameState, GameAction, getRoleInfo } from '@/lib/game-types';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
 import { TFunction } from '@/hooks/use-messages';
+
+/* eslint-disable @typescript-eslint/no-require-imports */
+const THUD_SOUND = require('@/assets/audio/effects/thud.mp3');
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 interface RoleRevealPhaseProps {
   state: GameState;
@@ -14,6 +19,7 @@ interface RoleRevealPhaseProps {
 
 export function RoleRevealPhase({ state, dispatch, t }: RoleRevealPhaseProps) {
   const [showingRole, setShowingRole] = useState(false);
+  const soundRef = useRef<Audio.Sound | null>(null);
   const player = state.players[state.currentPlayerIndex];
   const isLast = state.currentPlayerIndex === state.players.length - 1;
 
@@ -28,7 +34,15 @@ export function RoleRevealPhase({ state, dispatch, t }: RoleRevealPhaseProps) {
         <Text style={styles.instruction}>{t('reveal.passTo')}</Text>
         <Text style={styles.playerName}>{player.name}</Text>
         <View style={styles.buttonContainer}>
-          <Button title={t('reveal.seeRole')} onPress={() => setShowingRole(true)} />
+          <Button title={t('reveal.seeRole')} onPress={async () => {
+            setShowingRole(true);
+            try {
+              soundRef.current?.unloadAsync();
+              const { sound } = await Audio.Sound.createAsync(THUD_SOUND);
+              soundRef.current = sound;
+              await sound.playAsync();
+            } catch { /* ignore */ }
+          }} />
         </View>
       </FadeView>
     );

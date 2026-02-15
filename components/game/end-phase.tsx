@@ -1,10 +1,16 @@
+import { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Audio } from 'expo-av';
 import { GameState, GameAction } from '@/lib/game-types';
 import { getNarration } from '@/lib/narration';
 import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { PlayerList } from './player-list';
 import { TFunction } from '@/hooks/use-messages';
+
+/* eslint-disable @typescript-eslint/no-require-imports */
+const HORN_SOUND = require('@/assets/audio/effects/horn.mp3');
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 interface EndPhaseProps {
   state: GameState;
@@ -40,6 +46,23 @@ function getWinnerColor(winner: GameState['winner']): string {
 }
 
 export function EndPhase({ state, dispatch, t }: EndPhaseProps) {
+  const soundRef = useRef<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(HORN_SOUND);
+        soundRef.current = sound;
+        await sound.playAsync();
+      } catch { /* ignore */ }
+    })();
+
+    return () => {
+      soundRef.current?.unloadAsync();
+      soundRef.current = null;
+    };
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={[styles.winner, { color: getWinnerColor(state.winner) }]}>

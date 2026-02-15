@@ -78,6 +78,9 @@
   "night.noOneDied": "No One Died",
   "night.confirmKill": "Confirm Kill",
   "night.noOneDiedTonight": "No One Died Tonight",
+  "night.killed": "KILLED",
+  "night.noOneSurvivedNote": "No one was killed tonight.",
+  "night.doctorSavedNote": "The doctor saved the victim.",
 
   "end.goodWins": "GOOD WINS",
   "end.killersWin": "KILLERS WIN",
