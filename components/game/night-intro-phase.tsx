@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { GameState, GameAction } from '@/lib/game-types';
 import { getNarration } from '@/lib/narration';
@@ -6,6 +6,7 @@ import { Palermo, PalermoFonts } from '@/constants/theme';
 import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
 import { TFunction } from '@/hooks/use-messages';
+import { useNarrationAudio } from '@/hooks/use-narration-audio';
 
 interface NightIntroPhaseProps {
   state: GameState;
@@ -15,27 +16,28 @@ interface NightIntroPhaseProps {
 
 interface NarrationStep {
   text: string;
-  duration: number; // seconds, 0 = manual advance
+  duration: number; // fallback seconds, 0 = manual advance
+  audioKey?: string;
 }
 
 function buildSteps(loversEnabled: boolean, language: 'el' | 'en'): NarrationStep[] {
   const narration = getNarration(language);
   const steps: NarrationStep[] = [
-    { text: narration.nightFalls, duration: 4 },
-    { text: narration.killersWake, duration: 10 },
-    { text: narration.closeEyes, duration: 3 },
-    { text: narration.detectiveWake, duration: 8 },
-    { text: narration.everyoneCloseEyes, duration: 3 },
+    { text: narration.nightFalls, duration: 4, audioKey: 'nightFalls' },
+    { text: narration.killersWake, duration: 10, audioKey: 'killersWake' },
+    { text: narration.closeEyes, duration: 3, audioKey: 'closeEyes' },
+    { text: narration.detectiveWake, duration: 8, audioKey: 'detectiveWake' },
+    { text: narration.everyoneCloseEyes, duration: 3, audioKey: 'everyoneCloseEyes' },
   ];
 
   if (loversEnabled) {
     steps.push(
-      { text: narration.loversWake, duration: 10 },
-      { text: narration.closeEyes, duration: 3 },
+      { text: narration.loversWake, duration: 10, audioKey: 'loversWake' },
+      { text: narration.closeEyes, duration: 3, audioKey: 'closeEyes' },
     );
   }
 
-  steps.push({ text: narration.dawnBreaks, duration: 0 });
+  steps.push({ text: narration.dawnBreaks, duration: 0, audioKey: 'dawnBreaks' });
   return steps;
 }
 
@@ -45,6 +47,8 @@ export function NightIntroPhase({ state, dispatch, t }: NightIntroPhaseProps) {
   const steps = buildSteps(state.settings.loversEnabled, state.settings.language);
   const step = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
+  const { playStep, cleanup } = useNarrationAudio(state.settings.language);
+  const cancelledRef = useRef(false);
 
   const advance = useCallback(() => {
     if (isLast) {
@@ -59,10 +63,30 @@ export function NightIntroPhase({ state, dispatch, t }: NightIntroPhaseProps) {
   }, [isLast, dispatch]);
 
   useEffect(() => {
-    if (step.duration === 0) return;
-    const timer = setTimeout(advance, step.duration * 1000);
-    return () => clearTimeout(timer);
-  }, [stepIndex, step.duration, advance]);
+    cancelledRef.current = false;
+
+    if (step.duration === 0) {
+      // Manual step — play audio but don't auto-advance
+      if (step.audioKey) playStep(step.audioKey);
+      return;
+    }
+
+    if (step.audioKey) {
+      // Audio-driven advance
+      playStep(step.audioKey).then(() => {
+        if (!cancelledRef.current) advance();
+      });
+    } else {
+      // Fallback to timed advance
+      const timer = setTimeout(advance, step.duration * 1000);
+      return () => clearTimeout(timer);
+    }
+
+    return () => {
+      cancelledRef.current = true;
+      cleanup();
+    };
+  }, [stepIndex, step.duration, step.audioKey, advance, playStep, cleanup]);
 
   return (
     <View style={styles.container}>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GameState, GameAction } from '@/lib/game-types';
 import { getNarration } from '@/lib/narration';
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { FadeView } from '@/components/ui/fade-view';
 import { PlayerList } from './player-list';
 import { TFunction } from '@/hooks/use-messages';
+import { useNarrationAudio } from '@/hooks/use-narration-audio';
 
 interface NightKillPhaseProps {
   state: GameState;
@@ -19,13 +20,14 @@ type SubPhase = 'NARRATION' | 'SELECT_VICTIM';
 interface NarrationStep {
   text: string;
   duration: number; // 0 = manual
+  audioKey?: string;
 }
 
 function buildNightSteps(state: GameState): NarrationStep[] {
   const narration = getNarration(state.settings.language);
   const steps: NarrationStep[] = [
-    { text: narration.nightAgain, duration: 4 },
-    { text: narration.killersChoose, duration: 0 },
+    { text: narration.nightAgain, duration: 4, audioKey: 'nightAgain' },
+    { text: narration.killersChoose, duration: 0, audioKey: 'killersChoose' },
   ];
 
   const doctorAlive = state.players.some(
@@ -37,15 +39,15 @@ function buildNightSteps(state: GameState): NarrationStep[] {
 
   if (state.settings.doctorEnabled && doctorAlive) {
     steps.push(
-      { text: narration.doctorWake, duration: 10 },
-      { text: narration.doctorSleep, duration: 3 },
+      { text: narration.doctorWake, duration: 10, audioKey: 'doctorWake' },
+      { text: narration.doctorSleep, duration: 3, audioKey: 'doctorSleep' },
     );
   }
 
   if (state.settings.informantEnabled && informantAlive) {
     steps.push(
-      { text: narration.informantWake, duration: 8 },
-      { text: narration.informantSleep, duration: 3 },
+      { text: narration.informantWake, duration: 8, audioKey: 'informantWake' },
+      { text: narration.informantSleep, duration: 3, audioKey: 'informantSleep' },
     );
   }
 
@@ -63,6 +65,8 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
   const steps = buildNightSteps(state);
   const step = steps[stepIndex];
   const isLastStep = stepIndex === steps.length - 1;
+  const { playStep, cleanup } = useNarrationAudio(state.settings.language);
+  const cancelledRef = useRef(false);
 
   const advance = useCallback(() => {
     if (isLastStep) {
@@ -78,10 +82,29 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
 
   useEffect(() => {
     if (subPhase !== 'NARRATION') return;
-    if (!step || step.duration === 0) return;
-    const timer = setTimeout(advance, step.duration * 1000);
-    return () => clearTimeout(timer);
-  }, [stepIndex, step, advance, subPhase]);
+    if (!step) return;
+    cancelledRef.current = false;
+
+    if (step.duration === 0) {
+      // Manual step — play audio but don't auto-advance
+      if (step.audioKey) playStep(step.audioKey);
+      return;
+    }
+
+    if (step.audioKey) {
+      playStep(step.audioKey).then(() => {
+        if (!cancelledRef.current) advance();
+      });
+    } else {
+      const timer = setTimeout(advance, step.duration * 1000);
+      return () => clearTimeout(timer);
+    }
+
+    return () => {
+      cancelledRef.current = true;
+      cleanup();
+    };
+  }, [stepIndex, step, advance, subPhase, playStep, cleanup]);
 
   if (subPhase === 'SELECT_VICTIM') {
     return (
