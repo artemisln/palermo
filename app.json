@@ -10,14 +10,9 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.artemiscodes.palermo",
-      "buildNumber": "4",
+      "buildNumber": "5",
       "supportsTablet": true,
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "This app uses audio for game narration.",
-        "UIBackgroundModes": [
-          "audio",
-          "audio"
-        ],
         "ITSAppUsesNonExemptEncryption": false
       }
     },
