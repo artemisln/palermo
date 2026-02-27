@@ -29,7 +29,11 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
   } | null>(null);
   const totalVotes = Object.values(votes).reduce((a, b) => a + b, 0);
 
+  const maxTotalVotes = alivePlayers.length;
+  const votesRemaining = maxTotalVotes - totalVotes;
+
   function addVote(id: string) {
+    if (totalVotes >= maxTotalVotes) return;
     setVotes((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   }
 
@@ -133,7 +137,8 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
 
           <Pressable
             onPress={() => addVote(item.id)}
-            style={styles.voteButton}
+            style={[styles.voteButton, votesRemaining === 0 && styles.voteButtonDisabled]}
+            disabled={votesRemaining === 0}
             hitSlop={4}
           >
             <Text style={styles.voteButtonText}>+</Text>
@@ -162,9 +167,7 @@ export function VotingPhase({ state, dispatch, t }: VotingPhaseProps) {
 
       <View style={styles.footer}>
         <Text style={styles.totalVotes}>
-          {totalVotes === 1
-            ? t('vote.votesCastSingular', { count: totalVotes })
-            : t('vote.votesCast', { count: totalVotes })}
+          {totalVotes} / {maxTotalVotes}
         </Text>
         <Button
           title={t('vote.endVoting')}
