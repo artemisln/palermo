@@ -4,7 +4,7 @@ import { GameState, GameAction, INITIAL_STATE } from '@/lib/game-types';
 
 const MAX_HISTORY = 20;
 
-// Actions that don't advance the game — no history snapshot needed
+// Actions that don't advance the game, so no history snapshot is needed
 const SKIP_HISTORY: Set<GameAction['type']> = new Set([
   'ADD_PLAYER',
   'REMOVE_PLAYER',

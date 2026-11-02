@@ -114,7 +114,7 @@ export function NightKillPhase({ state, dispatch, t }: NightKillPhaseProps) {
     cancelledRef.current = false;
 
     if (step.duration === 0) {
-      // Manual step — play audio but don't auto-advance
+      // Manual step: play audio but don't auto-advance
       if (step.audioKey) playStep(step.audioKey);
       return;
     }

@@ -24,7 +24,7 @@ export function assignRoles(players: Player[], settings: GameSettings): Player[]
     roles.push('CITIZEN');
   }
 
-  // Shuffle only the roles — keep player order from setup
+  // Shuffle only the roles, keep player order from setup
   const shuffledRoles = shuffle(roles);
 
   const assigned = players.map((player, i) => ({

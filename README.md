@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# Palermo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Palermo is the Greek version of the party game Mafia: a few players are secretly killers, everyone else tries to find them, and the group votes someone out every day. This app replaces the human narrator: one phone hands out the roles, reads the night out loud and keeps track of who is still alive, so nobody has to sit out to run the game.
 
-## Get started
+It runs on a single device, fully offline, in Greek and English.
 
-1. Install dependencies
+[Download on the App Store](https://apps.apple.com/gr/app/id6759204428) (listed as "Μία Νύχτα στο Παλέρμο")
 
-   ```bash
-   npm install
-   ```
+I posted one video about it and it got about 1,000 users in its first two days.
 
-2. Start the app
+## Screenshots
 
-   ```bash
-   npx expo start
-   ```
+<p>
+  <img src="assets/screenshots/adding_players.png" width="200" alt="Adding players" />
+  <img src="assets/screenshots/role_reveal_killer.png" width="200" alt="Role reveal for a killer" />
+  <img src="assets/screenshots/stoxos_dolofonon.png" width="200" alt="Killers choosing a target at night" />
+  <img src="assets/screenshots/game_end_niki_dolofonon.png" width="200" alt="Killers win screen" />
+</p>
 
-In the output, you'll find options to open the app in a
+## Running it
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+You need Node.js and either the Expo Go app on your phone or an iOS simulator / Android emulator.
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Then scan the QR code with Expo Go, or press `i` or `a` in the terminal to open a simulator.
 
-## Learn more
+To run the tests:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm test
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## How the game works
 
-## Join the community
+Every game has a Hidden Killer, a Revealed Killer and a Detective. Everyone else is a Citizen. The Doctor, the Informant and the Lovers are optional and are switched on in settings. The base game needs 5 players, the Doctor needs 6, and the Informant or the Lovers need 7.
 
-Join our community of developers creating universal apps.
+1. Add the players' names and pick the optional roles.
+2. Pass the phone around the table. Each player sees their role in private.
+3. On the first night the app narrates while the two killers meet and the Detective learns who the Revealed Killer is.
+4. During the day the group talks and votes one player out.
+5. At night the killers pick a victim and the Doctor, if there is one, picks someone to save. The app announces who died in the morning.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Days and nights repeat until one side wins:
+
+- Good wins when both killers are dead.
+- The Killers win once there are as many killers alive as good players, or more.
+- The Lovers win if they are the last two players alive. If one lover dies, the other dies too.
+
+## Code structure
+
+All game rules live in `lib/` as plain TypeScript functions with no React in them, so they can be tested without rendering anything.
+
+```
+app/                 Expo Router entry, renders the current phase
+components/game/     one screen per phase (setup, role reveal, night, voting, end)
+components/ui/       buttons and small shared components
+hooks/               reducer with undo history, saved players, narration audio
+lib/game-reducer.ts  every state change in the game
+lib/role-assignment.ts  shuffles roles and picks the lovers
+lib/win-conditions.ts   checks who has won after each death
+assets/audio/        narration clips in el/ and en/, plus sound effects
+assets/messages/     UI text in Greek and English
+__tests__/           unit tests for the rules above
+```
+
+The whole game is one `useReducer`. Each action (`START_GAME`, `ELIMINATE_PLAYER`, `ANNOUNCE_VICTIM` and so on) returns the next state, and the reducer runs the win check after every death. The `useGameReducer` hook keeps the last 20 states so the back button can undo a mistap.
+
+Built with Expo SDK 54, React Native 0.81, Expo Router and expo-av.
+
+## License
+
+[MIT](LICENSE)
