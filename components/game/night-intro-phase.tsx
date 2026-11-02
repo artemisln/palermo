@@ -66,7 +66,7 @@ export function NightIntroPhase({ state, dispatch, t }: NightIntroPhaseProps) {
     cancelledRef.current = false;
 
     if (step.duration === 0) {
-      // Manual step — play audio but don't auto-advance
+      // Manual step: play audio but don't auto-advance
       if (step.audioKey) playStep(step.audioKey);
       return;
     }

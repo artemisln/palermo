@@ -43,7 +43,7 @@ export function useNarrationAudio(language: Language) {
         // 2-second pause after audio finishes
         await new Promise<void>((resolve) => setTimeout(resolve, POST_AUDIO_PAUSE));
       } catch {
-        // audio failed — caller falls back to timed duration
+        // audio failed, caller falls back to timed duration
       }
     },
     [audioMap, cleanup],
