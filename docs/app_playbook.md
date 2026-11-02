@@ -616,25 +616,7 @@ module.exports = defineConfig([...expoConfig]);
 
 ### Testing
 
-**Not present.** No test files exist. For new apps:
-
-- **Unit tests:** `lib/` functions with Jest (`game-reducer.test.ts`, `win-conditions.test.ts`)
-- **Component tests:** `@testing-library/react-native` for phase components
-- **Test naming:** `describe('gameReducer') > it('should eliminate player and check win condition')`
-- **Mocking:** Mock `expo-av` and `AsyncStorage` in test setup
-
-Recommended test structure:
-
-```
-__tests__/
-├── lib/
-│   ├── game-reducer.test.ts
-│   ├── role-assignment.test.ts
-│   └── win-conditions.test.ts
-└── components/
-    └── game/
-        └── voting-phase.test.tsx
-```
+Unit tests for `lib/` live in `__tests__/` and run with Jest through the `jest-expo` preset (`npm test`). They cover role assignment, minimum player counts, win conditions and the reducer's phase transitions. `__tests__/helpers.ts` builds players with fixed roles so the tests don't depend on the shuffle. There are no component tests yet.
 
 ### Logging
 
