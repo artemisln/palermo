@@ -10,13 +10,15 @@ Palermo is a single-device, offline party game (the Greek version of Mafia) buil
 
 ```bash
 npm install
-npx expo start        # run the app (Expo Go, iOS simulator or Android emulator)
+npx expo start        # then press i (iOS simulator) or a (Android emulator)
 npm test              # Jest unit tests in __tests__/
 npm run lint          # ESLint (expo lint)
 npx tsc --noEmit      # type check
 ```
 
 A change is done when tests, lint and the type check all pass. If you changed something a player sees, it also needs a manual run of the game in the app.
+
+Node 20.19.4 or newer. No env vars or API keys. The app is on Expo SDK 54, so the store version of Expo Go on a physical phone won't open it: use a simulator, or `npx expo run:ios` / `npx expo run:android`.
 
 ## Where things live
 

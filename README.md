@@ -19,20 +19,26 @@ I posted one video about it and it got about 1,000 users in its first two days.
 
 ## Running it
 
-You need Node.js and either the Expo Go app on your phone or an iOS simulator / Android emulator.
+You need Node.js 20.19.4 or newer, plus Xcode with an iOS simulator (macOS) or Android Studio with an emulator. The app needs no API keys or `.env` file.
 
 ```bash
 npm install
 npx expo start
 ```
 
-Then scan the QR code with Expo Go, or press `i` or `a` in the terminal to open a simulator.
+Press `i` for the iOS simulator or `a` for the Android emulator. Expo installs the right version of Expo Go on the simulator for you.
 
-To run the tests:
+The app is on Expo SDK 54. The Expo Go app from the App Store or Play Store only supports the latest SDK, so scanning the QR code with your phone will probably not work. Use a simulator, or build the app onto your device with `npx expo run:ios` or `npx expo run:android`.
+
+Before opening a pull request:
 
 ```bash
 npm test
+npm run lint
+npx tsc --noEmit
 ```
+
+To contribute, see [CONTRIBUTING.md](CONTRIBUTING.md). If you use a coding agent, it reads [AGENTS.md](AGENTS.md).
 
 ## How the game works
 
