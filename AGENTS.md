@@ -48,3 +48,5 @@ A change is done when tests, lint and the type check all pass. If you changed so
 ## Skills
 
 `.claude/skills/add-role/` is a step-by-step guide for adding an optional role (like the Doctor). Claude Code loads it automatically. Other agents can read the `SKILL.md` directly.
+
+- `android.blockedPermissions` in `app.json` removes RECORD_AUDIO, which expo-av adds by default. The app only plays audio, and Google Play asks about every permission, so don't undo it.
